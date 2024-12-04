@@ -42,11 +42,22 @@
             z-index: 2000;
             justify-content: center;
             align-items: center;
+            transition: opacity 0.5s ease; /* Fade out transition */
+        }
+
+        .loading-overlay.show {
+            display: flex; /* Show flex when necessary */
         }
 
         .loading-overlay img {
             width: 100px; /* Adjust the loading GIF size */
             height: 100px;
+        }
+
+        .loading-text {
+            color: #ffffff; /* White loading text */
+            margin-top: 15px; /* Margin top for better spacing */
+            font-size: 1.2em; /* Font size */
         }
 
         /* Button Styles */
@@ -128,8 +139,6 @@
             background-color: rgba(30, 30, 47, 0.9); /* Dark transparent background */
             z-index: 2000;
             overflow: auto;
-            justify-content: center;
-            align-items: center;
         }
 
         .modal-content {
@@ -440,16 +449,6 @@
             <h2>Drivemad</h2>
             <p>Drive, race, idk...</p>
         </div>
-        <div class="game-item" onclick="openGame('archer.html')">
-            <img src="archer.png" alt="Stick Archer">
-            <h2>Stick Archer</h2>
-            <p>Aim, ready, SHOOT!</p>
-        </div>
-        <div class="game-item" onclick="openGame('roblox.html')">
-            <img src="robloxcover.png" alt="Roblox">
-            <h2>ROBLOX - DOWN</h2>
-            <p>Tons of experiences!</p>
-        </div>
         <div class="game-item" onclick="openGame('snowballio.html')">
             <img src="snowballio.png" alt="Snowball IO">
             <h2>Snowball IO</h2>
@@ -571,6 +570,7 @@
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loading-overlay">
         <img src="loading.gif" alt="Loading..."> <!-- Your loading gif here -->
+        <div class="loading-text" id="loading-timer"></div>
     </div>
 
     <!-- Settings Modal -->
@@ -605,29 +605,34 @@
         function openGame(gameFile) {
             // Show loading overlay
             const loadingOverlay = document.getElementById('loading-overlay');
-            loadingOverlay.style.display = 'flex';
+            const loadingText = document.getElementById('loading-timer');
+            loadingOverlay.classList.add('show');
+
+            // Set loading timer for demonstration
+            const loadingDuration = Math.floor(Math.random() * 3) + 3; // Random time between 3 and 6 seconds
+            loadingText.textContent = `Approx loading time: ${loadingDuration} seconds`;
+            
+            // Start countdown
+            let remainingTime = loadingDuration;
+            const countdown = setInterval(() => {
+                remainingTime--;
+                if (remainingTime <= 0) {
+                    clearInterval(countdown);
+                }
+            }, 1000); // Update every second
 
             // Set a timeout to simulate loading time
             setTimeout(() => {
-                const newWindow = window.open(gameFile, '_blank');
+                // Hide loading overlay with fading out effect
+                loadingOverlay.style.opacity = '0';
 
+                // Navigate to new game after fading out
                 setTimeout(() => {
-                    newWindow.document.title = "Home | Schoology";
-
-                    // Set favicon for new page
-                    const link = newWindow.document.createElement('link');
-                    link.rel = 'icon';
-                    link.href = 'https://www.betterbuys.com/wp-content/uploads/2016/11/schoology-logo.png';
-                    newWindow.document.head.appendChild(link);
-
-                    // Add header with glowing text linking back to main page
-                    const header = newWindow.document.createElement('header');
-                    header.innerHTML = `<h1 onclick="window.location.href='/playervpn-games/index.html'" style="cursor: pointer; font-size: 1.5em; font-family: 'Roboto', sans-serif; background: linear-gradient(90deg, #6a0dad, #1e90ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: colorCycle 6s infinite linear;">🎮 PlayerVPN</h1>`;
-                    header.style.cssText = "position: absolute; top: 10px; left: 10px; color: #1e90ff;";
-
-                    newWindow.document.body.insertBefore(header, newWindow.document.body.firstChild);
-                }, 100);
-            }, 3000); // Loading for 3 seconds, adjust 3000 to your desired loading time
+                    loadingOverlay.classList.remove('show');
+                    loadingOverlay.style.opacity = '1'; // Reset opacity for future use
+                    window.open(gameFile, '_blank');
+                }, 500); // Wait for fade out duration (0.5 seconds)
+            }, loadingDuration * 1000); // Convert seconds to milliseconds
         }
 
         function filterGames() {
