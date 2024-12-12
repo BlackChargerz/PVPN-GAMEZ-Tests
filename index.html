@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link rel="manifest" href="manifest.json"> <!-- Manifest file -->
-  <title>PlayerVPN games</title>
+  <title>Orbit.</title>
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -75,19 +75,19 @@
     .cloak-button {
       position: fixed;
       right: 20px;
-      background: linear-gradient(45deg, #6a0dad, #1e90ff); /* Purple to blue gradient */
+      background: linear-gradient(45deg, #444444, #444444); /* Dark grey */
       color: white;
       border: none;
       border-radius: 8px;
       padding: 10px 15px;
       cursor: pointer;
       font-size: 1em;
-      transition: background 0.3s, transform 0.2s;
+      transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
       z-index: 1001;
     }
 
     .cloak-button:hover {
-      background: linear-gradient(45deg, #5a0e8e, #1c70c7);
+      box-shadow: 0 0 20px red; /* Glow effect on hover */
       transform: scale(1.05);
     }
 
@@ -118,55 +118,6 @@
       height: 24px; /* Height of the GitHub icon */
     }
 
-    /* Search Input Styles */
-    .search-container {
-      margin-top: 20px;
-      width: 100%;
-      max-width: 600px;
-      position: relative;
-      z-index: 2; /* Above particles background */
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 10px;
-      border: 2px solid #464646; /* Darker grey */
-      border-radius: 10px;
-      background-color: #181818; /* Darker background */
-      color: #ffffff;
-      font-size: 1em;
-      transition: border 0.3s;
-    }
-
-    .search-input:focus {
-      outline: none;
-      border-color: #1e90ff; /* Blue on focus */
-    }
-
-    .search-results {
-      position: absolute;
-      background: #181818;
-      border-radius: 10px;
-      border: 2px solid #464646;
-      width: 100%;
-      max-height: 200px;
-      overflow-y: auto;
-      z-index: 1000;
-      display: none; /* Hidden by default */
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
-    }
-
-    .search-result-item {
-      padding: 10px;
-      cursor: pointer;
-      color: #ffffff;
-      transition: background 0.3s;
-    }
-
-    .search-result-item:hover {
-      background: rgba(30, 144, 255, 0.2); /* Light blue */
-    }
-
     /* Settings Modal Styles */
     .modal {
       display: none; /* Hidden by default */
@@ -195,7 +146,7 @@
     .settings-title {
       font-size: 2em;
       margin-bottom: 15px;
-      color: #1e90ff; /* Blue for title */
+      color: #ff0000; /* Red for title */
     }
 
     /* Dropdown Styles */
@@ -215,7 +166,7 @@
 
     .dropdown select:focus {
       outline: none;
-      border-color: #1e90ff; /* Blue on focus */
+      border-color: #ff0000; /* Red on focus */
     }
 
     /* Sidebar Styles */
@@ -233,7 +184,7 @@
     }
 
     .sidebar h3 {
-      color: #1e90ff; /* Blue titles */
+      color: #ff0000; /* Red titles */
       font-size: 1.5em;
       margin-bottom: 10px;
     }
@@ -253,6 +204,7 @@
       background: rgba(30, 144, 255, 0.2); /* Light blue */
     }
 
+    /* Recommended Games */
     .recommended-games {
       margin-top: 20px;
     }
@@ -284,24 +236,13 @@
       position: relative;
     }
 
-    header h1 {
-      font-size: 5.0em;
+    header h2 {
+      font-size: 4.5em; /* Increased header size */
       font-family: 'Roboto', sans-serif;
       font-weight: 700;
       letter-spacing: 3px;
-      background: linear-gradient(90deg, #6a0dad, #1e90ff); /* Purple to blue */
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: colorCycle 6s infinite linear;
-      text-shadow: 0 0 10px rgba(30, 144, 255, 0.8); /* Light blue shadow */
-      z-index: 2; /* Above particles background */
-    }
-
-    header p {
-      color: #b3b3b3;
-      font-size: 1.2em;
-      margin-top: 8px;
-      animation: fadeIn 1.2s ease-in-out;
+      color: #ff0000; /* Red color for header */
+      text-shadow: 0 0 20px rgba(255, 0, 0, 0.8); /* Red glow */
       z-index: 2; /* Above particles background */
     }
 
@@ -350,7 +291,7 @@
     }
 
     .game-item h2 {
-      color: #1e90ff; /* Light Blue text */
+      color: #ff0000; /* Red text */
       font-size: 1.5em;
       font-weight: 600;
       margin: 15px 0 8px;
@@ -358,7 +299,7 @@
     }
 
     .game-item:hover h2 {
-      color: #86ceff; /* Lighter blue */
+      color: #ff8888; /* Lighter red on hover */
     }
 
     .game-item p {
@@ -392,17 +333,8 @@
         grid-template-columns: repeat(2, 1fr); /* 2 items per row on smaller screens */
       }
 
-      header h1 {
-        font-size: 3.8em;
-      }
-
-      header p {
-        font-size: 1em;
-      }
-
-      .cloak-button {
-        top: 70px; /* Lower the button if needed */
-        right: 20px;
+      header h2 {
+        font-size: 3.8em; /* Adjust header size for smaller screens */
       }
     }
 
@@ -469,17 +401,11 @@
   
   <header>
     <img src="orbitgameslogo.png" alt="Your Header Image"> <!-- Replace with your header image URL -->
-    <h2>Tons of unblocked games!</h2>
+    <h3>Tons of unblocked games!</h3>
   </header>
 
   <!-- Visit Counter -->
   <div class="visit-counter" id="visit-counter"></div>
-
-  <!-- Game Search Bar -->
-  <div class="search-container">
-    <input type="text" class="search-input" placeholder="Search for a game..." oninput="filterGames()">
-    <div class="search-results" id="search-results"></div>
-  </div>
 
   <!-- A:B Cloaker Button -->
   <button class="cloak-button" onclick="window.location.href='/playervpn-games/aboutblank'">A:B Cloaker</button>
@@ -490,12 +416,6 @@
   <div class="games-container" id="games-container">
     <!-- Game items -->
 
-    <div class="game-item" onclick="openGame('Comingsoon.com')">
-      <img src="orbitgames.png" alt="Orbit">
-      <h2>Orbit Games - Our new site</h2>
-      <p>Coming Soon</p>
-    </div>
-    
     <div class="game-item" onclick="openGame('requestgame.html')">
       <img src="requestgame.png" alt="Game;request">
       <h2>Request.</h2>
@@ -990,35 +910,6 @@
         elem.webkitRequestFullscreen();
       } else if (elem.msRequestFullscreen) {
         elem.msRequestFullscreen();
-      }
-    }
-
-    function filterGames() {
-      const searchInput = document.querySelector('.search-input');
-      const filter = searchInput.value.toLowerCase();
-      const gamesContainer = document.getElementById('games-container');
-      const gameItems = gamesContainer.getElementsByClassName('game-item');
-      const searchResults = document.getElementById('search-results');
-      
-      // Clear previous search results
-      searchResults.innerHTML = '';
-      searchResults.style.display = 'none'; // Hide search results initially
-      
-      // Loop through games and display matching items
-      for (let i = 0; i < gameItems.length; i++) {
-        const gameTitle = gameItems[i].querySelector('h2').textContent.toLowerCase();
-        
-        if (gameTitle.includes(filter) && filter !== '') {
-          const resultItem = document.createElement('div');
-          resultItem.className = 'search-result-item';
-          resultItem.innerHTML = `<strong>${gameItems[i].querySelector('h2').textContent}</strong>`;
-          resultItem.onclick = () => openGame(gameItems[i].onclick.toString().match(/'(.*?)'/)[1]); // Open game on click
-          searchResults.appendChild(resultItem);
-        }
-      }
-
-      if (searchResults.innerHTML) {
-        searchResults.style.display = 'block'; // Show results if there are matches
       }
     }
 
