@@ -2,795 +2,1188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlayerVPN games</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.json"> <!-- Manifest file -->
+  <title>PlayerVPN games</title>
 
-    <!-- Redesigned Inline CSS for New Styling -->
-    <style>
-        /* General Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-        body {
-            background-color: #1e1e2f; /* Dark background */
-            color: #e0e0e0; /* Light grey text */
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            overflow-x: hidden;
-        }
+  <!-- Particles.js -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
-        /* Loading Screen Styles */
-        .loading-overlay {
-            display: none; /* Hidden by default */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8); /* Black background with opacity */
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.5s ease; /* Fade out transition */
-        }
+  <!-- Redesigned Inline CSS for New Styling -->
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        .loading-overlay.show {
-            display: flex; /* Show flex when necessary */
-        }
+    body {
+      background-color: #000; /* Black background */
+      color: #fff; /* White text */
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+      position: relative;
+    }
 
-        .loading-overlay img {
-            width: 100px; /* Adjust the loading GIF size */
-            height: 100px;
-        }
+    /* Particles Background */
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
 
-        .loading-text {
-            color: #ffffff; /* White loading text */
-            margin-top: 15px; /* Margin top for better spacing */
-            font-size: 1.2em; /* Font size */
-        }
+    /* Header Image */
+    header img {
+      width: 100%; /* Width covering full width */
+      max-height: 250px; /* Maximum height of header image */
+      object-fit: cover; /* Cover to maintain aspect ratio */
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 2; /* Above particles background */
+    }
+    
+    /* Visit Counter Styles */
+    .visit-counter {
+      background-color: rgba(30, 30, 47, 0.9);
+      border-radius: 25px; /* Curved corners */
+      padding: 15px 30px;
+      color: white;
+      font-size: 1.5em;
+      position: fixed; /* Fixed positioning */
+      top: 10px; /* Space from the top */
+      left: 50%;
+      transform: translateX(-50%); /* Center horizontally */
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+      z-index: 2000; /* High z-index to stay above other content */
+    }
 
-        /* Button Styles */
-        .cloak-button {
-            position: fixed;
-            right: 20px;
-            background: linear-gradient(45deg, #6a0dad, #1e90ff); /* Purple to blue gradient */
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 15px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background 0.3s, transform 0.2s;
-            z-index: 1001;
-        }
+    /* Button Styles */
+    .cloak-button {
+      position: fixed;
+      right: 20px;
+      background: linear-gradient(45deg, #6a0dad, #1e90ff); /* Purple to blue gradient */
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.3s, transform 0.2s;
+      z-index: 1001;
+    }
 
-        .cloak-button:hover {
-            background: linear-gradient(45deg, #5a0e8e, #1c70c7);
-            transform: scale(1.05);
-        }
+    .cloak-button:hover {
+      background: linear-gradient(45deg, #5a0e8e, #1c70c7);
+      transform: scale(1.05);
+    }
 
-        /* Search Input Styles */
-        .search-container {
-            margin-top: 20px;
-            width: 100%;
-            max-width: 600px;
-            position: relative;
-        }
+    /* GitHub Button Styles */
+    .github-button {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background-color: black; /* Black circle */
+      border-radius: 50%; /* Circular shape */
+      width: 50px; /* Diameter of circle */
+      height: 50px; /* Diameter of circle */;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      transition: transform 0.2s;
+    }
 
-        .search-input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #4c4c59; /* Darker grey */
-            border-radius: 10px;
-            background-color: #282a36; /* Darker background */
-            color: #e0e0e0;
-            font-size: 1em;
-            transition: border 0.3s;
-        }
+    .github-button:hover {
+      transform: scale(1.1); /* Slightly increase size on hover */
+    }
 
-        .search-input:focus {
-            outline: none;
-            border-color: #1e90ff; /* Blue on focus */
-        }
+    .github-icon {
+      width: 24px; /* Width of the GitHub icon */
+      height: 24px; /* Height of the GitHub icon */
+    }
 
-        .search-results {
-            position: absolute;
-            background: #282a36;
-            border-radius: 10px;
-            border: 2px solid #4c4c59;
-            width: 100%;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 1000;
-            display: none; /* Hidden by default */
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
-        }
+    /* Search Input Styles */
+    .search-container {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 600px;
+      position: relative;
+      z-index: 2; /* Above particles background */
+    }
 
-        .search-result-item {
-            padding: 10px;
-            cursor: pointer;
-            color: #e0e0e0;
-            transition: background 0.3s;
-        }
+    .search-input {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #464646; /* Darker grey */
+      border-radius: 10px;
+      background-color: #181818; /* Darker background */
+      color: #ffffff;
+      font-size: 1em;
+      transition: border 0.3s;
+    }
 
-        .search-result-item:hover {
-            background: rgba(30, 144, 255, 0.2); /* Light blue */
-        }
+    .search-input:focus {
+      outline: none;
+      border-color: #1e90ff; /* Blue on focus */
+    }
 
-        /* Settings Modal Styles */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(30, 30, 47, 0.9); /* Dark transparent background */
-            z-index: 2000;
-            overflow: auto;
-        }
+    .search-results {
+      position: absolute;
+      background: #181818;
+      border-radius: 10px;
+      border: 2px solid #464646;
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none; /* Hidden by default */
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+    }
 
-        .modal-content {
-            background-color: #282a36; /* Modal background color */
-            border-radius: 15px;
-            width: 80%; /* Size of the box */
-            padding: 20px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            color: #ffffff;
-        }
+    .search-result-item {
+      padding: 10px;
+      cursor: pointer;
+      color: #ffffff;
+      transition: background 0.3s;
+    }
 
-        .settings-title {
-            font-size: 2em;
-            margin-bottom: 15px;
-            color: #1e90ff; /* Blue for title */
-        }
+    .search-result-item:hover {
+      background: rgba(30, 144, 255, 0.2); /* Light blue */
+    }
 
-        /* Dropdown Styles */
-        .dropdown {
-            margin-bottom: 20px;
-        }
+    /* Settings Modal Styles */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(30, 30, 47, 0.9); /* Dark transparent background */
+      z-index: 2000;
+      overflow: auto;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .dropdown select {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #4c4c59; /* Darker grey */
-            border-radius: 10px;
-            background-color: #282a36;
-            color: #e0e0e0;
-            font-size: 1em;
-        }
+    .modal-content {
+      background-color: #282a36; /* Modal background color */
+      border-radius: 15px;
+      width: 80%; /* Size of the box */
+      padding: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      color: #ffffff;
+      position: relative;
+    }
 
-        .dropdown select:focus {
-            outline: none;
-            border-color: #1e90ff; /* Blue on focus */
-        }
+    .settings-title {
+      font-size: 2em;
+      margin-bottom: 15px;
+      color: #1e90ff; /* Blue for title */
+    }
 
-        /* Sidebar Styles */
-        .sidebar {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 200px;
-            background-color: #282a36;
-            border: 2px solid #4c4c59; /* Darker grey */
-            border-radius: 12px;
-            padding: 10px;
-            z-index: 1000;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
-        }
+    /* Dropdown Styles */
+    .dropdown {
+      margin-bottom: 20px;
+    }
 
-        .sidebar h3 {
-            color: #1e90ff; /* Blue titles */
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
+    .dropdown select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #464646; /* Darker grey */
+      border-radius: 10px;
+      background-color: #181818;
+      color: #ffffff;
+      font-size: 1em;
+    }
 
-        .sidebar a {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: #b3b3b3;
-            margin: 8px 0;
-            padding: 5px;
-            border-radius: 8px;
-            transition: background 0.3s;
-        }
+    .dropdown select:focus {
+      outline: none;
+      border-color: #1e90ff; /* Blue on focus */
+    }
 
-        .sidebar a:hover {
-            background: rgba(30, 144, 255, 0.2); /* Light blue */
-        }
+    /* Sidebar Styles */
+    .sidebar {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 200px;
+      background-color: #282a36;
+      border: 2px solid #464646; /* Darker grey */
+      border-radius: 12px;
+      padding: 10px;
+      z-index: 1000;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+    }
 
-        .recommended-games {
-            margin-top: 20px;
-        }
+    .sidebar h3 {
+      color: #1e90ff; /* Blue titles */
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
 
-        .recommended-item {
-            display: flex;
-            align-items: center;
-            margin: 8px 0;
-            transition: transform 0.3s;
-        }
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #b3b3b3;
+      margin: 8px 0;
+      padding: 5px;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
 
-        .recommended-item img {
-            width: 40px;
-            height: 40px;
-            object-fit: cover;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
+    .sidebar a:hover {
+      background: rgba(30, 144, 255, 0.2); /* Light blue */
+    }
 
-        .recommended-item:hover {
-            transform: scale(1.05);
-        }
+    .recommended-games {
+      margin-top: 20px;
+    }
 
-        /* Header Section */
-        header {
-            text-align: center;
-            margin: 30px 0;
-            animation: fadeIn 1s ease-in-out;
-        }
+    .recommended-item {
+      display: flex;
+      align-items: center;
+      margin: 8px 0;
+      transition: transform 0.3s;
+    }
 
-        header h1 {
-            font-size: 5.0em;
-            font-family: 'Roboto', sans-serif;
-            font-weight: 700;
-            letter-spacing: 3px;
-            background: linear-gradient(90deg, #6a0dad, #1e90ff); /* Purple to blue */
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: colorCycle 6s infinite linear;
-            text-shadow: 0 0 10px rgba(30, 144, 255, 0.8); /* Light blue shadow */
-        }
+    .recommended-item img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
 
-        header p {
-            color: #b3b3b3;
-            font-size: 1.2em;
-            margin-top: 8px;
-            animation: fadeIn 1.2s ease-in-out;
-        }
+    .recommended-item:hover {
+      transform: scale(1.05);
+    }
 
-        /* Games Container */
-        .games-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 items per row */
-            gap: 30px;
-            width: 100%;
-            max-width: 1400px;
-            padding: 20px;
-            animation: fadeInUp 1.4s ease-in-out;
-        }
+    /* Header Section */
+    header {
+      text-align: center;
+      margin: 30px 0;
+      animation: fadeIn 1s ease-in-out;
+      position: relative;
+    }
 
-        /* Game Item Style */
-        .game-item {
-            background-color: #282a36;
-            border: 2px solid rgba(30, 144, 255, 0.5); /* Light blue */
-            border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.5);
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            text-align: center;
-        }
+    header h1 {
+      font-size: 5.0em;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      letter-spacing: 3px;
+      background: linear-gradient(90deg, #6a0dad, #1e90ff); /* Purple to blue */
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: colorCycle 6s infinite linear;
+      text-shadow: 0 0 10px rgba(30, 144, 255, 0.8); /* Light blue shadow */
+      z-index: 2; /* Above particles background */
+    }
 
-        .game-item:hover {
-            transform: translateY(-8px) scale(1.05);
-            box-shadow: 0px 12px 30px rgba(30, 144, 255, 0.7); /* Light blue shadow on hover */
-        }
+    header p {
+      color: #b3b3b3;
+      font-size: 1.2em;
+      margin-top: 8px;
+      animation: fadeIn 1.2s ease-in-out;
+      z-index: 2; /* Above particles background */
+    }
 
-        .game-item img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-bottom: 4px solid #1e90ff; /* Blue border */
-            transition: transform 0.4s;
-        }
+    /* Games Container */
+    .games-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 items per row */
+      gap: 30px;
+      width: 100%;
+      max-width: 1400px;
+      padding: 20px;
+      animation: fadeInUp 1.4s ease-in-out;
+      z-index: 2; /* Above particles background */
+    }
 
-        .game-item:hover img {
-            transform: scale(1.1);
-        }
+    /* Game Item Style */
+    .game-item {
+      background-color: #282a36;
+      border: 2px solid rgba(30, 144, 255, 0.5); /* Light blue */
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.5);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+    }
 
-        .game-item h2 {
-            color: #1e90ff; /* Light Blue text */
-            font-size: 1.5em;
-            font-weight: 600;
-            margin: 15px 0 8px;
-            transition: color 0.4s;
-        }
+    .game-item:hover {
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0px 12px 30px rgba(30, 144, 255, 0.7); /* Light blue shadow on hover */
+    }
 
-        .game-item:hover h2 {
-            color: #86ceff; /* Lighter blue */
-        }
+    .game-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-bottom: 4px solid #1e90ff; /* Blue border */
+      transition: transform 0.4s;
+    }
 
-        .game-item p {
-            color: #b3b3b3;
-            padding: 0 15px 20px;
-            font-size: 1em;
-        }
+    .game-item:hover img {
+      transform: scale(1.1);
+    }
 
-        /* Keyframes for Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+    .game-item h2 {
+      color: #1e90ff; /* Light Blue text */
+      font-size: 1.5em;
+      font-weight: 600;
+      margin: 15px 0 8px;
+      transition: color 0.4s;
+    }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    .game-item:hover h2 {
+      color: #86ceff; /* Lighter blue */
+    }
 
-        @keyframes colorCycle {
-            0% { color: #6a0dad; }
-            25% { color: #1e90ff; }
-            50% { color: #6a0dad; }
-            75% { color: #1e90ff; }
-            100% { color: #6a0dad; }
-        }
+    .game-item p {
+      color: #b3b3b3;
+      padding: 0 15px 20px;
+      font-size: 1em;
+    }
 
-        /* Responsive Layout */
-        @media (max-width: 768px) {
-            .games-container {
-                grid-template-columns: repeat(2, 1fr); /* 2 items per row on smaller screens */
-            }
+    /* Keyframes for Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
 
-            header h1 {
-                font-size: 3.8em;
-            }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-            header p {
-                font-size: 1em;
-            }
+    @keyframes colorCycle {
+      0% { color: #6a0dad; }
+      25% { color: #1e90ff; }
+      50% { color: #6a0dad; }
+      75% { color: #1e90ff; }
+      100% { color: #6a0dad; }
+    }
 
-            .cloak-button {
-                top: 70px; /* Lower the button if needed */
-                right: 20px;
-            }
-        }
+    /* Responsive Layout */
+    @media (max-width: 768px) {
+      .games-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 items per row on smaller screens */
+      }
 
-        @media (max-width: 480px) {
-            .games-container {
-                grid-template-columns: 1fr; /* 1 item per row on very small screens */
-            }
-        }
-    </style>
+      header h1 {
+        font-size: 3.8em;
+      }
+
+      header p {
+        font-size: 1em;
+      }
+
+      .cloak-button {
+        top: 70px; /* Lower the button if needed */
+        right: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .games-container {
+        grid-template-columns: 1fr; /* 1 item per row on very small screens */
+      }
+    }
+
+    /* Game Modal Styles */
+    .game-modal {
+      display: none; /* Hidden by default */
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      height: 80%;
+      background-color: #000;
+      border: 2px solid #ff0000; /* Red border */
+      z-index: 3000; /* Above everything else */
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .game-iframe {
+      width: 100%;
+      height: calc(100% - 50px); /* Leave space for the sidebar */
+      border: none;
+    }
+    
+    .game-sidebar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 50px;
+      height: 100%;
+      background-color: #ff0000; /* Red background */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+    }
+
+    .game-sidebar button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: white;
+      font-size: 1.5em;
+      margin: 10px 0;
+      transition: transform 0.2s;
+    }
+
+    .game-sidebar button:hover {
+      transform: scale(1.1);
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>🎮 PlayerVPN</h1>
-        <h2>Tons of unblocked games!</h2>
-        <p>Discover and play games with style! Some games may not load!</p>
-        <h2>Recommended screen size: 75%</h2>
-    </header>
+  <div id="particles-js"></div>
+  
+  <header>
+    <img src="orbitgames.png" alt="Your Header Image"> <!-- Replace with your header image URL -->
+    <h2>Tons of unblocked games!</h2>
+  </header>
 
-    <!-- Game Search Bar -->
-    <div class="search-container">
-        <input type="text" class="search-input" placeholder="Search for a game..." oninput="filterGames()">
-        <div class="search-results" id="search-results"></div>
+  <!-- Visit Counter -->
+  <div class="visit-counter" id="visit-counter"></div>
+
+  <!-- Game Search Bar -->
+  <div class="search-container">
+    <input type="text" class="search-input" placeholder="Search for a game..." oninput="filterGames()">
+    <div class="search-results" id="search-results"></div>
+  </div>
+
+  <!-- A:B Cloaker Button -->
+  <button class="cloak-button" onclick="window.location.href='/playervpn-games/aboutblank'">A:B Cloaker</button>
+
+  <!-- Settings Icon (placed under the A:B Cloaker Button) -->
+  <button class="cloak-button" id="settings-button" style="top: 70px;" onclick="openSettings()">⚙️ Settings</button>
+
+  <div class="games-container" id="games-container">
+    <!-- Game items -->
+
+    <div class="game-item" onclick="openGame('Comingsoon.com')">
+      <img src="orbitgames.png" alt="Orbit">
+      <h2>Orbit Games - Our new site</h2>
+      <p>Coming Soon</p>
     </div>
-
-    <!-- A:B Cloaker Button -->
-    <button class="cloak-button" onclick="window.location.href='/playervpn-games/aboutblank'">A:B Cloaker</button>
     
-    <!-- Settings Icon (placed under the A:B Cloaker Button) -->
-    <button class="cloak-button" id="settings-button" style="top: 70px;" onclick="openSettings()">⚙️ Settings</button>
-
-    <div class="games-container" id="games-container">
-        <!-- Game items -->
-        <div class="game-item" onclick="openGame('requestgame.html')">
-            <img src="requestgame.png" alt="Game;request">
-            <h2>Request.</h2>
-            <p>Request a GAME!</p>
-        </div>
-        <div class="game-item" onclick="openGame('snowrider.html')">
-            <img src="snowrider.png" alt="Snowrider">
-            <h2>Snowrider 3D</h2>
-            <p>Ride through the SnowRider world and get your best high score!</p>
-        </div>
-        <div class="game-item" onclick="openGame('timeshooter3.html')">
-            <img src="timeshooter3.png" alt="Time Shooter 3">
-            <h2>Time Shooter 3</h2>
-            <p>Time Shooter.</p>
-        </div>
-        <div class="game-item" onclick="openGame('smashkarts.html')">
-            <img src="smashkarts.png" alt="Smash Karts">
-            <h2>Smash Karts</h2>
-            <p>Mario Kart but better!</p>
-        </div>
-        <div class="game-item" onclick="openGame('stickdual.html')">
-            <img src="stickdual.png" alt="Stickman Duals">
-            <h2>Stick Duals</h2>
-            <p>Test your sword fighting skills!</p>
-        </div>
-        <div class="game-item" onclick="openGame('mario.html')">
-            <img src="mario.png" alt="Mario">
-            <h2>Mario Bros.</h2>
-            <p>Win. Just win.</p>
-        </div>
-        <div class="game-item" onclick="openGame('football.html')">
-            <img src="football.png" alt="football">
-            <h2>Soccer Game</h2>
-            <p>Score goals!</p>
-        </div>
-        <div class="game-item" onclick="openGame('robber.html')">
-            <img src="robber.png" alt="BobTheRobber">
-            <h2>Bob The Robber</h2>
-            <p>Rob.</p>
-        </div>
-        <div class="game-item" onclick="openGame('https://nexus-chat-rooms.github.io/nexuschatroom')">
-            <img src="nexus.png" alt="NexusChat">
-            <h2>Nexus Chat</h2>
-            <p>Chat With Friends</p>
-        </div>
-        <div class="game-item" onclick="openGame('deathrun.html')">
-            <img src="deathrun.png" alt="Death run game.">
-            <h2>Death Run 3D</h2>
-            <p>Dodge objects in your path!</p>
-        </div>
-        <div class="game-item" onclick="openGame('amongus.html')">
-            <img src="amongus.png" alt="Among Us">
-            <h2>AmongUs</h2>
-            <p>Find the murderer!</p>
-        </div>
-        <div class="game-item" onclick="openGame('drivemad.html')">
-            <img src="drivemad.png" alt="Drivemad">
-            <h2>Drivemad</h2>
-            <p>Drive, race, idk...</p>
-        </div>
-        <div class="game-item" onclick="openGame('snowballio.html')">
-            <img src="snowballio.png" alt="Snowball IO">
-            <h2>Snowball IO</h2>
-            <p>Roll your snowball to make it big. WIN!!</p>
-        </div>
-        <div class="game-item" onclick="openGame('gunspin.html')">
-            <img src="gunspin.png" alt="Gunspin">
-            <h2>GunSpin</h2>
-            <p>Shoot bullets to move.</p>
-        </div>
-        <div class="game-item" onclick="openGame('//1v1lol')">
-            <img src="1v1.png" alt="1v1lol">
-            <h2>1v1 lol</h2>
-            <p>Shoot enemies for fun...</p>
-        </div>
-        <div class="game-item" onclick="openGame('2048.html')">
-            <img src="2048.png" alt="2048 game.">
-            <h2>2048</h2>
-            <p>Sliding block puzzle.</p>
-        </div>
-        <div class="game-item" onclick="openGame('cookieclicker.html')">
-            <img src="cookieclicker.png" alt="Cookie Clicker">
-            <h2>Cookie Clicker</h2>
-            <p>Click the Cookie</p>
-        </div>
-        <div class="game-item" onclick="openGame('holeio.html')">
-            <img src="holeio.png" alt="Hole Io">
-            <h2>Hole IO</h2>
-            <p>Eat items, people, and MORE in Hole IO</p>
-        </div>
-        <div class="game-item" onclick="openGame('justfall.html')">
-            <img src="justfall.png" alt="fall;just">
-            <h2>Justfall LOL</h2>
-            <p>Your a penguin...</p>
-        </div>
-        <div class="game-item" onclick="openGame('fnaf1.html')">
-            <img src="fnaf1.png" alt="fnaf;hide">
-            <h2>FNAF</h2>
-            <p>Hide. Stay quiet!</p>
-        </div>
-        <div class="game-item" onclick="openGame('bballstars.html')">
-            <img src="bballstars.png" alt="Shoot;Bball">
-            <h2>Basketball Stars</h2>
-            <p>Shoot baskets to win.</p>
-        </div>
-        <div class="game-item" onclick="openGame('bitlife.html')">
-            <img src="bitlife.png" alt="grow-up;get-a-life">
-            <h2>Bitlife.</h2>
-            <p>Grow up, get a life.</p>
-        </div>
-        <div class="game-item" onclick="openGame('bloxorz.html')">
-            <img src="bloxorz.png" alt="Move;rectangle">
-            <h2>Bloxorz</h2>
-            <p>Move around as a rectangle.</p>
-        </div>
-        <div class="game-item" onclick="openGame('cuttherope.html')">
-            <img src="cuttherope.png" alt="Cut;Ropes">
-            <h2>Cut the Rope.</h2>
-            <p>Cut ropes.</p>
-        </div>
-        <div class="game-item" onclick="openGame('eaglercraftx.html')">
-            <img src="eaglercraftx.png" alt="beta;minecraft">
-            <h2>EaglercraftX</h2>
-            <p>Minecraft but browser based.</p>
-        </div>
-        <div class="game-item" onclick="openGame('https://playervpn.github.io/buildnowgamegg/')">
-            <img src="buildnow.png" alt="browser;fortnite">
-            <h2>BuildNow GG</h2>
-            <p>Fortnite But Browser Based.</p>
-        </div>
-        <div class="game-item" onclick="openGame('elasticman.html')">
-            <img src="elasticman.png" alt="man;elastic">
-            <h2>Elastic man</h2>
-            <p>Pull his face</p>
-        </div>
-        <div class="game-item" onclick="openGame('retrohaunt.html')">
-            <img src="retrohaunt.png" alt="hanted;retro">
-            <h2>Retro Haunt</h2>
-            <p>A fun retro game, entertain yourself</p>
-        </div>
-        <div class="game-item" onclick="openGame('chromedino.html')">
-            <img src="chromedino.png" alt="chrome;dino">
-            <h2>Chrome Dino</h2>
-            <p>Play the Google Dino offline game!</p>
-        </div>
-        <div class="game-item" onclick="openGame('slope')">
-            <img src="slopegame.png" alt="slope">
-            <h2>Slope Game</h2>
-            <p>A fantastic fullscreen speed run game</p>
-        </div>
-        <div class="game-item" onclick="openGame('tunnelrush.html')">
-            <img src="tunnelrush.png" alt="rush;tunnel">
-            <h2>Tunnel Rush</h2>
-            <p>Dodge obstacles in the tunnel!</p>
-        </div>
-        <div class="game-item" onclick="openGame('coreballgame.html')">
-            <img src="coreballgame.png" alt="ball;core">
-            <h2>Coreball</h2>
-            <p>Start, play, have fun!</p>
-        </div>
-        <div class="game-item" onclick="openGame('pacman.html')">
-            <img src="pacman.png" alt="pac;man">
-            <h2>Pacman :)</h2>
-            <p>Classic Arcade Pacman :)</p>
-        </div>
-        <div class="game-item" onclick="openGame('tictactoe')">
-            <img src="tictactoe.png" alt="tic;toes">
-            <h2>Tictactoe</h2>
-            <p>X;O</p>
-        </div>
-        <div class="game-item" onclick="openGame('doodlejump.html')">
-            <img src="doodlejump.png" alt="doodle;jump">
-            <h2>Doodle Jump</h2>
-            <p>Doodle Jump. A classic.</p>
-        </div>
-
+    <div class="game-item" onclick="openGame('requestgame.html')">
+      <img src="requestgame.png" alt="Game;request">
+      <h2>Request.</h2>
+      <p>Request a GAME!</p>
     </div>
-
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loading-overlay">
-        <img src="loading.gif" alt="Loading..."> <!-- Your loading gif here -->
-        <div class="loading-text" id="loading-timer"></div>
+    <div class="game-item" onclick="openGame('snowrider.html')">
+      <img src="snowrider.png" alt="Snowrider">
+      <h2>Snowrider 3D</h2>
+      <p>Ride through the SnowRider world and get your best high score!</p>
     </div>
-
-    <!-- Settings Modal -->
-    <div class="modal" id="settings-modal">
-        <div class="modal-content">
-            <h2 class="settings-title">Tab Cloak Settings</h2>
-            <div class="dropdown">
-                <select id="tab-cloak-select" onchange="changeTabCloak()">
-                    <option value="default">Select Tab Cloak</option>
-                    <option value="schoology">Schoology</option>
-                    <option value="google">Google</option>
-                    <option value="google_classroom">Google Classroom</option>
-                    <option value="edia">Edia</option> <!-- New Edia option -->
-                </select>
-            </div>
-            <button class="cloak-button" onclick="closeSettings()">Close Settings</button>
-        </div>
+    <div class="game-item" onclick="openGame('timeshooter3.html')">
+      <img src="timeshooter3.png" alt="Time Shooter 3">
+      <h2>Time Shooter 3</h2>
+      <p>Time Shooter.</p>
     </div>
-
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar" style="display: none;">
-        <h3>Menu</h3>
-        <a href="quickkey.html"><img src="quickkey.png" alt="LEAVE" style="width: 20px; margin-right: 8px;"> LEAVE</a>
-        <div class="recommended-games">
-            <h3>Recommended Games</h3>
-            <div id="recommended-items"></div>
-        </div>
+    <div class="game-item" onclick="openGame('smashkarts.html')">
+      <img src="smashkarts.png" alt="Smash Karts">
+      <h2>Smash Karts</h2>
+      <p>Mario Kart but better!</p>
     </div>
+    <div class="game-item" onclick="openGame('stickdual.html')">
+      <img src="stickdual.png" alt="Stickman Duals">
+      <h2>Stick Duals</h2>
+      <p>Test your sword fighting skills!</p>
+    </div>
+    <div class="game-item" onclick="openGame('mario.html')">
+      <img src="mario.png" alt="Mario">
+      <h2>Mario Bros.</h2>
+      <p>Win. Just win.</p>
+    </div>
+    <div class="game-item" onclick="openGame('football.html')">
+      <img src="football.png" alt="Football">
+      <h2>Soccer Game</h2>
+      <p>Score goals!</p>
+    </div>
+    <div class="game-item" onclick="openGame('robber.html')">
+      <img src="robber.png" alt="BobTheRobber">
+      <h2>Bob The Robber</h2>
+      <p>Rob.</p>
+    </div>
+    <div class="game-item" onclick="openGame('https://nexus-chat-rooms.github.io/nexuschatroom')">
+      <img src="nexus.png" alt="NexusChat">
+      <h2>Nexus Chat</h2>
+      <p>Chat With Friends</p>
+    </div>
+    <div class="game-item" onclick="openGame('deathrun.html')">
+      <img src="deathrun.png" alt="Death run game.">
+      <h2>Death Run 3D</h2>
+      <p>Dodge objects in your path!</p>
+    </div>
+    <div class="game-item" onclick="openGame('amongus.html')">
+      <img src="amongus.png" alt="Among Us">
+      <h2>AmongUs</h2>
+      <p>Find the murderer!</p>
+    </div>
+    <div class="game-item" onclick="openGame('drivemad.html')">
+      <img src="drivemad.png" alt="Drivemad">
+      <h2>Drivemad</h2>
+      <p>Drive, race, idk...</p>
+    </div>
+    <div class="game-item" onclick="openGame('archer.html')">
+      <img src="archer.png" alt="Stick Archer">
+      <h2>Stick Archer</h2>
+      <p>Aim, ready, SHOOT!</p>
+    </div>
+    <div class="game-item" onclick="openGame('roblox.html')">
+      <img src="robloxcover.png" alt="Roblox">
+      <h2>ROBLOX - DOWN</h2>
+      <p>Tons of experiences!</p>
+    </div>
+    <div class="game-item" onclick="openGame('snowballio.html')">
+      <img src="snowballio.png" alt="Snowball IO">
+      <h2>Snowball IO</h2>
+      <p>Roll your snowball to make it big. WIN!!</p>
+    </div>
+    <div class="game-item" onclick="openGame('gunspin.html')">
+      <img src="gunspin.png" alt="Gunspin">
+      <h2>GunSpin</h2>
+      <p>Shoot bullets to move.</p>
+    </div>
+    <div class="game-item" onclick="openGame('1v1lol.html')">
+      <img src="1v1lol.png" alt="1v1lol">
+      <h2>1v1 lol</h2>
+      <p>Shoot enemies for fun...</p>
+    </div>
+    <div class="game-item" onclick="openGame('2048.html')">
+      <img src="2048.png" alt="2048 game.">
+      <h2>2048</h2>
+      <p>Sliding block puzzle.</p>
+    </div>
+    <div class="game-item" onclick="openGame('cookieclicker.html')">
+      <img src="cookieclicker.png" alt="Cookie Clicker">
+      <h2>Cookie Clicker</h2>
+      <p>Click the Cookie</p>
+    </div>
+    <div class="game-item" onclick="openGame('holeio.html')">
+      <img src="holeio.png" alt="Hole IO">
+      <h2>Hole IO</h2>
+      <p>Eat items, people, and MORE in Hole IO</p>
+    </div>
+    <div class="game-item" onclick="openGame('justfall.html')">
+      <img src="justfall.png" alt="fall;just">
+      <h2>Justfall LOL</h2>
+      <p>Your a penguin...</p>
+    </div>
+    <div class="game-item" onclick="openGame('fnaf1.html')">
+      <img src="fnaf1.png" alt="fnaf;hide">
+      <h2>FNAF</h2>
+      <p>Hide. Stay quiet!</p>
+    </div>
+    <div class="game-item" onclick="openGame('bballstars.html')">
+      <img src="bballstars.png" alt="Shoot;Bball">
+      <h2>Basketball Stars</h2>
+      <p>Shoot baskets to win.</p>
+    </div>
+    <div class="game-item" onclick="openGame('bitlife.html')">
+      <img src="bitlife.png" alt="grow-up;get-a-life">
+      <h2>Bitlife.</h2>
+      <p>Grow up, get a life.</p>
+    </div>
+    <div class="game-item" onclick="openGame('bloxorz.html')">
+      <img src="bloxorz.png" alt="Move;rectangle">
+      <h2>Bloxorz</h2>
+      <p>Move around as a rectangle.</p>
+    </div>
+    <div class="game-item" onclick="openGame('cuttherope.html')">
+      <img src="cuttherope.png" alt="Cut;Ropes">
+      <h2>Cut the Rope.</h2>
+      <p>Cut ropes.</p>
+    </div>
+    <div class="game-item" onclick="openGame('eaglercraftx.html')">
+      <img src="eaglercraftx.png" alt="beta;minecraft">
+      <h2>EaglercraftX</h2>
+      <p>Minecraft but browser based.</p>
+    </div>
+    <div class="game-item" onclick="openGame('https://playervpn.github.io/buildnowgamegg/')">
+      <img src="buildnow.png" alt="browser;fortnite">
+      <h2>BuildNow GG</h2>
+      <p>Fortnite But Browser Based.</p>
+    </div>
+    <div class="game-item" onclick="openGame('elasticman.html')">
+      <img src="elasticman.png" alt="man;elastic">
+      <h2>Elastic man</h2>
+      <p>Pull his face</p>
+    </div>
+    <div class="game-item" onclick="openGame('retrohaunt.html')">
+      <img src="retrohaunt.png" alt="hanted;retro">
+      <h2>Retro Haunt</h2>
+      <p>A fun retro game, entertain yourself</p>
+    </div>
+    <div class="game-item" onclick="openGame('chromedino.html')">
+      <img src="chromedino.png" alt="chrome;dino">
+      <h2>Chrome Dino</h2>
+      <p>Play the Google Dino offline game!</p>
+    </div>
+    <div class="game-item" onclick="openGame('slope')">
+      <img src="slopegame.png" alt="slope">
+      <h2>Slope Game</h2>
+      <p>A fantastic fullscreen speed run game</p>
+    </div>
+      <div class="game-item" onclick="openGame('slope-2')">
+      <img src="slope-2.png" alt="Slope-2">
+      <h2>Slope Game 2</h2>
+      <p>A fantastic fullscreen speed run game. The 2nd.</p>
+    </div>
+    <div class="game-item" onclick="openGame('tunnelrush.html')">
+      <img src="tunnelrush.png" alt="rush;tunnel">
+      <h2>Tunnel Rush</h2>
+      <p>Dodge obstacles in the tunnel!</p>
+    </div>
+    <div class="game-item" onclick="openGame('coreballgame.html')">
+      <img src="coreballgame.png" alt="ball;core">
+      <h2>Coreball</h2>
+      <p>Start, play, have fun!</p>
+    </div>
+    <div class="game-item" onclick="openGame('pacman.html')">
+      <img src="pacman.png" alt="pac;man">
+      <h2>Pacman :)</h2>
+      <p>Classic Arcade Pacman :)</p>
+    </div>
+    <div class="game-item" onclick="openGame('tictactoe')">
+      <img src="tictactoe.png" alt="tic;toes">
+      <h2>Tictactoe</h2>
+      <p>X;O</p>
+    </div>
+    <div class="game-item" onclick="openGame('doodlejump')">
+      <img src="doodlejump.png" alt="doodle;jump">
+      <h2>Doodle Jump</h2>
+      <p>Doodle Jump. A classic.</p>
+    </div>
+    <div class="game-item" onclick="openGame('bubbleshooter.html')">
+      <img src="bubbleshooter.png" alt="shoot;bubble">
+      <h2>Bubble Shooter</h2>
+      <p>Shoot bubbles.</p>
+    </div>
+    <div class="game-item" onclick="openGame('https://playervpn.github.io/blockblast-unlocked/')">
+      <img src="blockblast.png" alt="block;blast">
+      <h2>Block Blast!</h2>
+      <p>Classic Block Blaster.</p>
+    </div>
+    <div class="game-item" onclick="openGame('evilglitch.html')">
+      <img src="evilglitch.png" alt="glitched;shooter">
+      <h2>Evil Glitch</h2>
+      <p>Fun, addictive, Glitched</p>
+    </div>
+      <div class="game-item" onclick="openGame('geometrydash.html')">
+      <img src="geometrydash.png" alt="geometry;dash">
+      <h2>Geometry Dash</h2>
+      <p>Not really learning :)</p>
+    </div>
+      <div class="game-item" onclick="openGame('cubefield')">
+      <img src="cubefieldgame.png" alt="field;cube">
+      <h2>Cube Field</h2>
+      <p>A game where u must dodge sqaures :)</p>
+    </div>
+      <div class="game-item" onclick="openGame('backrooms')">
+      <img src="backrooms.png" alt="rooms;backrooms">
+      <h2>Back Rooms</h2>
+      <p>Play our most 3d game here:)</p>
+    </div>
+      <div class="game-item" onclick="openGame('paper-3')">
+      <img src="paperio3.png" alt="paper;io3">
+      <h2>Paper io 3D</h2>
+      <p>Fun mobile game, works in browser don't worry :)</p>
+    </div>
+      <div class="game-item" onclick="openGame('territorial.html')">
+      <img src="territorial.png" alt="io;territorial">
+      <h2>Territorial IO</h2>
+      <p>Engaging, fun, game for all devices.</p>
+    </div>
+      <div class="game-item" onclick="openGame('cluster-rush')">
+      <img src="clusterrush.png" alt="rush;cluster">
+      <h2>Cluster Rush</h2>
+      <p>Takes a little while to load :)</p>
+    </div>
+      <div class="game-item" onclick="openGame('slitherio-online.html')">
+      <img src="slitherio-online.png" alt="Slither;io-online">
+      <h2>SlitherIO Online</h2>
+      <p>Scratch copy of unlocked SlitherIO :)</p>
+    </div>
+      <div class="game-item" onclick="openGame('baldis-basics')">
+      <img src="baldis-basics.png" alt="Basics;Baldis">
+      <h2>Baldis Basics</h2>
+      <p>Play a fun WebGL Game, Baldis Basics :)</p>
+    </div>
+      <div class="game-item" onclick="openGame('motox3m.html')">
+      <img src="motox3m.png" alt="x3m;moto">
+      <h2>Moto X3M</h2>
+      <p>Play the fun original Moto X3M Game</p>
+    </div>
+      <div class="game-item" onclick="openGame('angrybirds.html')">
+      <img src="angrybirds.png" alt="birds;angry">
+      <h2>Angry Birds</h2>
+      <p>Throw birds at objects ;)</p>
+    </div>
+      <div class="game-item" onclick="openGame('portal.html')">
+      <img src="portal.png" alt="portal;game">
+      <h2>Portal</h2>
+      <p>Play the fun Portal game. (Flash version) ;)</p>
+    </div>
+      <div class="game-item" onclick="openGame('therealsnakeio.html')">
+      <img src="therealsnakeio.png" alt="snake;iogame">
+      <h2>The REAL SlitherIO</h2>
+      <p>The non-scratch version of Slitherio on PVPN games.</p>
+    </div>
+    <div class="game-item" onclick="openGame('driftboss.html')">
+      <img src="driftboss.png" alt="boss;drift">
+      <h2>Drift Boss</h2>
+      <p>Oh man, don't fall off!</p>
+    </div>
+    <div class="game-item" onclick="openGame('tiny-fishing.html')">
+      <img src="tiny-fishing.png" alt="fish;tiny">
+      <h2>Tiny Fishing</h2>
+      <p>The super fun ultimate so so so cool game!</p>
+    </div>
+      <div class="game-item" onclick="openGame('acheivmentunlocked.html')">
+      <img src="achievementunlocked.png" alt="unlocked;game">
+      <h2>Achievement Unlocked</h2>
+      <p>Something!</p>
+    </div>
+      <div class="game-item" onclick="openGame('monkeymart.html')">
+      <img src="monkeymart.png" alt="mart;monkey">
+      <h2>Monkey Mart</h2>
+      <p>Fun.</p>
+    </div>
+      <div class="game-item" onclick="openGame('stack.html')">
+      <img src="stack.png" alt="stack">
+      <h2>Stack.</h2>
+      <p>The blocks get smaller everytime you miss :)</p>
+    </div>
+      <div class="game-item" onclick="openGame('stickmanhook.html')">
+      <img src="stickmanhook.png" alt="hook;stickman">
+      <h2>Stickman Hook</h2>
+      <p>How far can you make it?</p>
+    </div>
+      <div class="game-item" onclick="openGame('supermario64.html')">
+      <img src="supermario64.png" alt="mario;super">
+      <h2>Super Mario 64</h2>
+      <p>Save Princess Peach!</p>
+    </div>
+  </div>
 
-    <!-- Inline JavaScript for Tab Cloak & Header Navigation -->
-    <script>
-        function openGame(gameFile) {
-            // Show loading overlay
-            const loadingOverlay = document.getElementById('loading-overlay');
-            const loadingText = document.getElementById('loading-timer');
-            loadingOverlay.classList.add('show');
+  <!-- Game Modal -->
+  <div class="game-modal" id="game-modal">
+    <div class="game-sidebar">
+      <button onclick="closeGame()">X</button>
+      <button onclick="toggleFullScreen()">⛶</button>
+      <button onclick="window.open('https://learn.lcps.org/', '_blank')">🔑</button>
+    </div>
+    <iframe class="game-iframe" id="game-iframe" src=""></iframe>
+  </div>
 
-            // Set loading timer for demonstration
-            const loadingDuration = Math.floor(Math.random() * 3) + 3; // Random time between 3 and 6 seconds
-            loadingText.textContent = `Approx loading time: ${loadingDuration} seconds`;
-            
-            // Start countdown
-            let remainingTime = loadingDuration;
-            const countdown = setInterval(() => {
-                remainingTime--;
-                if (remainingTime <= 0) {
-                    clearInterval(countdown);
-                }
-            }, 1000); // Update every second
+  <!-- GitHub Button -->
+  <div class="github-button" onclick="window.open('https://github.com/PlayerVPN/playervpn-games', '_blank')">
+    <img src="https://sasountorossian.github.io/Library/images/Github%20Logo.png" class="github-icon" alt="GitHub Icon">
+  </div>
 
-            // Set a timeout to simulate loading time
-            setTimeout(() => {
-                // Hide loading overlay with fading out effect
-                loadingOverlay.style.opacity = '0';
+  <!-- Settings Modal -->
+  <div class="modal" id="settings-modal">
+    <div class="modal-content">
+      <h2 class="settings-title">Tab Cloak Settings</h2>
+      <div class="dropdown">
+        <select id="tab-cloak-select" onchange="changeTabCloak()">
+          <option value="default">Select Tab Cloak</option>
+          <option value="schoology">Schoology</option>
+          <option value="google">Google</option>
+          <option value="google_classroom">Google Classroom</option>
+          <option value="edia">Edia</option> <!-- New Edia option -->
+        </select>
+      </div>
+      <button class="cloak-button" onclick="closeSettings()">Close Settings</button>
+    </div>
+  </div>
 
-                // Navigate to new game after fading out
-                setTimeout(() => {
-                    loadingOverlay.classList.remove('show');
-                    loadingOverlay.style.opacity = '1'; // Reset opacity for future use
-                    window.open(gameFile, '_blank');
-                }, 500); // Wait for fade out duration (0.5 seconds)
-            }, loadingDuration * 1000); // Convert seconds to milliseconds
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar" style="display: none;">
+    <h3>Menu</h3>
+    <a href="quickkey.html"><img src="quickkey.png" alt="LEAVE" style="width: 20px; margin-right: 8px;"> LEAVE</a>
+    <div class="recommended-games">
+      <h3>Recommended Games</h3>
+      <div id="recommended-items"></div>
+    </div>
+  </div>
+
+  <!-- Inline JavaScript for Tab Cloak & Header Navigation -->
+  <script>
+    // Particles.js initialization
+    particlesJS("particles-js", {
+      "particles": {
+        "number": {
+          "value": 80,
+          "density": {
+            "enable": true,
+            "value_area": 800
+          }
+        },
+        "color": {
+          "value": "#464646"
+        },
+        "shape": {
+          "type": "circle",
+          "stroke": {
+            "width": 0,
+            "color": "#000000"
+          },
+          "polygon": {
+            "nb_sides": 5
+          },
+          "image": {
+            "src": "img/github.svg",
+            "width": 100,
+            "height": 100
+          }
+        },
+        "opacity": {
+          "value": 1,
+          "random": false,
+          "anim": {
+            "enable": false,
+            "speed": 4.955044955044955,
+            "opacity_min": 0.3916083916083916,
+            "sync": false
+          }
+        },
+        "size": {
+          "value": 1, // Adjusted size for smaller dots
+          "random": true,
+          "anim": {
+            "enable": false,
+            "speed": 40,
+            "size_min": 0.1,
+            "sync": false
+          }
+        },
+        "line_linked": {
+          "enable": true,
+          "distance": 94.69771699587272,
+          "color": "#ffffff",
+          "opacity": 0.4,
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 6,
+          "direction": "none",
+          "random": false,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false,
+          "attract": {
+            "enable": false,
+            "rotateX": 600,
+            "rotateY": 1200
+          }
         }
-
-        function filterGames() {
-            const searchInput = document.querySelector('.search-input');
-            const filter = searchInput.value.toLowerCase();
-            const gamesContainer = document.getElementById('games-container');
-            const gameItems = gamesContainer.getElementsByClassName('game-item');
-            const searchResults = document.getElementById('search-results');
-
-            // Clear previous search results
-            searchResults.innerHTML = '';
-            searchResults.style.display = 'none'; // Hide search results initially
-
-            // Loop through games and display matching items
-            for (let i = 0; i < gameItems.length; i++) {
-                const gameTitle = gameItems[i].querySelector('h2').textContent.toLowerCase();
-                
-                if (gameTitle.includes(filter) && filter !== '') {
-                    const resultItem = document.createElement('div');
-                    resultItem.className = 'search-result-item';
-                    resultItem.innerHTML = `<strong>${gameItems[i].querySelector('h2').textContent}</strong>`;
-                    resultItem.onclick = () => openGame(gameItems[i].onclick.toString().match(/'(.*?)'/)[1]); // Open game on click
-                    searchResults.appendChild(resultItem);
-                }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": true,
+            "mode": "repulse"
+          },
+          "onclick": {
+            "enable": false,
+            "mode": "remove"
+          },
+          "resize": true
+        },
+        "modes": {
+          "grab": {
+            "distance": 1500,
+            "line_linked": {
+              "opacity": 1
             }
-
-            if (searchResults.innerHTML) {
-                searchResults.style.display = 'block'; // Show results if there are matches
-            }
+          },
+          "bubble": {
+            "distance": 1500,
+            "size": 500,
+            "duration": 0,
+            "opacity": 8,
+            "speed": 3
+          },
+          "repulse": {
+            "distance": 591.4085914085914,
+            "duration": 0.4
+          },
+          "push": {
+            "particles_nb": 4
+          },
+          "remove": {
+            "particles_nb": 2
+          }
         }
+      },
+      "retina_detect": true
+    });
 
-        function openSettings() {
-            document.getElementById('settings-modal').style.display = 'flex';
+    async function updateVisitCounter() {
+      // Increment visit count on the server
+      await fetch('/api/visit-count', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      });
+
+      // Fetch the updated visit count
+      const response = await fetch('/api/visit-count');
+      const data = await response.json();
+      document.getElementById('visit-counter').textContent = `Total Visits: ${data.count}`;
+    }
+
+    function openGame(gameFile) {
+      document.getElementById('game-iframe').src = gameFile; // Set the source of iframe
+      document.getElementById('game-modal').style.display = 'block'; // Show modal
+    }
+
+    function closeGame() {
+      document.getElementById('game-modal').style.display = 'none'; // Hide modal
+      document.getElementById('game-iframe').src = ''; // Clear iframe source
+    }
+
+    function toggleFullScreen() {
+      const elem = document.getElementById('game-modal');
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.mozRequestFullScreen) {
+        elem.mozRequestFullScreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      }
+    }
+
+    function filterGames() {
+      const searchInput = document.querySelector('.search-input');
+      const filter = searchInput.value.toLowerCase();
+      const gamesContainer = document.getElementById('games-container');
+      const gameItems = gamesContainer.getElementsByClassName('game-item');
+      const searchResults = document.getElementById('search-results');
+      
+      // Clear previous search results
+      searchResults.innerHTML = '';
+      searchResults.style.display = 'none'; // Hide search results initially
+      
+      // Loop through games and display matching items
+      for (let i = 0; i < gameItems.length; i++) {
+        const gameTitle = gameItems[i].querySelector('h2').textContent.toLowerCase();
+        
+        if (gameTitle.includes(filter) && filter !== '') {
+          const resultItem = document.createElement('div');
+          resultItem.className = 'search-result-item';
+          resultItem.innerHTML = `<strong>${gameItems[i].querySelector('h2').textContent}</strong>`;
+          resultItem.onclick = () => openGame(gameItems[i].onclick.toString().match(/'(.*?)'/)[1]); // Open game on click
+          searchResults.appendChild(resultItem);
         }
+      }
 
-        function closeSettings() {
-            document.getElementById('settings-modal').style.display = 'none';
-        }
+      if (searchResults.innerHTML) {
+        searchResults.style.display = 'block'; // Show results if there are matches
+      }
+    }
 
-        function changeTabCloak() {
-            const selectedValue = document.getElementById('tab-cloak-select').value;
-            let title, favicon;
+    function openSettings() {
+      document.getElementById('settings-modal').style.display = 'flex';
+    }
 
-            // Determine the title and favicon based on selection
-            switch (selectedValue) {
-                case 'schoology':
-                    title = "Home | Schoology";
-                    favicon = 'https://www.betterbuys.com/wp-content/uploads/2016/11/schoology-logo.png';
-                    break;
-                case 'google':
-                    title = "Home | Google";
-                    favicon = 'https://www.google.com/favicon.ico';
-                    break;
-                case 'google_classroom':
-                    title = "Home | Google Classroom";
-                    favicon = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Google_Classroom_icon.svg/2048px-Google_Classroom_icon.svg.png';
-                    break;
-                case 'edia':
-                    title = "Edia";
-                    favicon = 'ediamath.png'; // Set favicon for Edia
-                    break;
-                default:
-                    title = "PlayerVPN";
-                    favicon = 'https://i.ibb.co/N75vkX7/PVPN.png';
-                    break;
-            }
-            
-            // Save settings to localStorage
-            localStorage.setItem("tabTitle", title);
-            localStorage.setItem("tabFavicon", favicon);
+    function closeSettings() {
+      document.getElementById('settings-modal').style.display = 'none';
+    }
 
-            // Update the document title and favicon
-            document.title = title;
+    function changeTabCloak() {
+      const selectedValue = document.getElementById('tab-cloak-select').value;
+      let title, favicon;
 
-            const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-            link.rel = 'icon';
-            link.href = favicon;
-            document.getElementsByTagName('head')[0].appendChild(link);
-        }
+      // Determine the title and favicon based on selection
+      switch (selectedValue) {
+        case 'schoology':
+          title = "Home | Schoology";
+          favicon = 'https://www.betterbuys.com/wp-content/uploads/2016/11/schoology-logo.png';
+          break;
+        case 'google':
+          title = "Home | Google";
+          favicon = 'https://www.google.com/favicon.ico';
+          break;
+        case 'google_classroom':
+          title = "Home | Google Classroom";
+          favicon = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Google_Classroom_icon.svg/2048px-Google_Classroom_icon.svg.png';
+          break;
+        case 'edia':
+          title = "Edia";
+          favicon = 'ediamath.png'; // Set favicon for Edia
+          break;
+        default:
+          title = "PlayerVPN";
+          favicon = 'https://i.ibb.co/N75vkX7/PVPN.png';
+          break;
+      }
+      
+      // Save settings to localStorage
+      localStorage.setItem("tabTitle", title);
+      localStorage.setItem("tabFavicon", favicon);
 
-        // Sidebar visibility for game pages
-        if (window.location.pathname !== '/playervpn-games/index.html') {
-            document.getElementById('sidebar').style.display = 'block';
-        }
+      // Update the document title and favicon
+      document.title = title;
 
-        // Load settings from localStorage on page load
-        window.onload = function() {
-            const title = localStorage.getItem("tabTitle");
-            const favicon = localStorage.getItem("tabFavicon");
+      const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+      link.rel = 'icon';
+      link.href = favicon;
+      document.getElementsByTagName('head')[0].appendChild(link);
+    }
 
-            // Update title and favicon if saved
-            if (title) {
-                document.title = title;
-            }
-            if (favicon) {
-                const link = document.createElement('link');
-                link.rel = 'icon';
-                link.href = favicon;
-                document.head.appendChild(link);
-            }
+    // Service Worker registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').then((registration) => {
+          console.log('Service Worker registered with scope:', registration.scope);
+        }).catch((error) => {
+          console.log('Service Worker registration failed:', error);
+        });
+      });
+    }
 
-            loadRecommendedGames();
-        };
+    // Sidebar visibility for game pages
+    if (window.location.pathname !== '/playervpn-games/index.html') {
+      document.getElementById('sidebar').style.display = 'block';
+    }
 
-        // Recommended Games Logic
-        const games = [
-            { name: "Snowrider 3D", image: "snowrider.png", link: "snowrider.html" },
-            { name: "Time Shooter 3", image: "timeshooter3.png", link: "timeshooter3.html" },
-            { name: "Smash Karts", image: "smashkarts.png", link: "smashkarts.html" },
-            { name: "Stick Duals", image: "stickdual.png", link: "stickdual.html" },
-            { name: "Mario Bros.", image: "mario.png", link: "mario.html" },
-            { name: "Soccer Game", image: "football.png", link: "football.html" },
-            { name: "Bob The Robber", image: "robber.png", link: "robber.html" },
-            { name: "Death Run 3D", image: "deathrun.png", link: "deathrun.html" },
-            { name: "AmongUs", image: "amongus.png", link: "amongus.html" },
-            { name: "Drivemad", image: "drivemad.png", link: "drivemad.html" },
-            { name: "Stick Archer", image: "archer.png", link: "archer.html" },
-            { name: "ROBLOX - DOWN", image: "robloxcover.png", link: "roblox.html" },
-            { name: "Snowball IO", image: "snowballio.png", link: "snowballio.html" },
-            { name: "GunSpin", image: "gunspin.png", link: "gunspin.html" },
-            { name: "1v1 lol", image: "//1v1lol/splash.png", link: "//1v1lol" },
-            { name: "2048", image: "2048.png", link: "2048.html" },
-            { name: "Cookie Clicker", image: "cookieclicker.png", link: "cookieclicker.html" },
-            { name: "Hole IO", image: "holeio.png", link: "holeio.html" },
-            { name: "Justfall LOL", image: "justfall.png", link: "justfall.html" },
-            { name: "FNAF", image: "fnaf1.png", link: "fnaf1.html" },
-            { name: "Basketball Stars", image: "bballstars.png", link: "bballstars.html" },
-            { name: "Bitlife.", image: "bitlife.png", link: "bitlife.html" },
-            { name: "Bloxorz", image: "bloxorz.png", link: "bloxorz.html" },
-            { name: "Cut the Rope.", image: "cuttherope.png", link: "cuttherope.html" },
-            { name: "EaglercraftX", image: "eaglercraftx.png", link: "eaglercraftx.html" },
-            { name: "BuildNow GG", image: "buildnow.png", link: "https://playervpn.github.io/buildnowgamegg/" },
-            { name: "Elastic man", image: "elasticman.png", link: "elasticman.html" },
-            { name: "Retro Haunt", image: "retrohaunt.png", link: "retrohaunt.html" },
-            { name: "Chrome Dino", image: "chromedino.png", link: "chromedino.html" },
-            { name: "Slope", image: "slopegame.png", link: "slopegame.html" },
-            { name: "Tunnel Rush", image: "tunnelrush.png", link: "tunnelrush.html" },
-            { name: "Coreball", image: "coreballgame.png", link: "coreballgame.html" },
-            { name: "Pacman :)", image: "pacman.png", link: "pacman.html" },
-            { name: "Tictactoe", image: "tictactoe.png", link: "tictactoe" },
-            { name: "Doodle Jump", image: "doodlejump.png", link: "doodlejump.html" },
-        ];
+    // Load settings from localStorage on page load
+    window.onload = function() {
+      updateVisitCounter(); // Update visit counter on page load
 
-        function loadRecommendedGames() {
-            const recommendedContainer = document.getElementById('recommended-items');
-            recommendedContainer.innerHTML = ''; // Clear existing content
+      const title = localStorage.getItem("tabTitle");
+      const favicon = localStorage.getItem("tabFavicon");
 
-            // Shuffle games and select random ones
-            const shuffledGames = games.sort(() => 0.5 - Math.random()).slice(0, 8);
+      // Update title and favicon if saved
+      if (title) {
+        document.title = title;
+      }
+      if (favicon) {
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        link.href = favicon;
+        document.head.appendChild(link);
+      }
 
-            shuffledGames.forEach(game => {
-                const gameElement = document.createElement('div');
-                gameElement.className = 'recommended-item';
-                gameElement.innerHTML = `<a href="${game.link}"><img src="${game.image}" alt="${game.name}"> ${game.name}</a>`;
-                recommendedContainer.appendChild(gameElement);
-            });
-        }
-    </script>
-    
+      loadRecommendedGames();
+    };
+
+    // Recommended Games Logic
+    const games = [
+      { name: "Snowrider 3D", image: "snowrider.png", link: "snowrider.html" },
+      { name: "Time Shooter 3", image: "timeshooter3.png", link: "timeshooter3.html" },
+      { name: "Smash Karts", image: "smashkarts.png", link: "smashkarts.html" },
+      { name: "Stick Duals", image: "stickdual.png", link: "stickdual.html" },
+      { name: "Mario Bros.", image: "mario.png", link: "mario.html" },
+      { name: "Soccer Game", image: "football.png", link: "football.html" },
+      { name: "Bob The Robber", image: "robber.png", link: "robber.html" },
+      { name: "Death Run 3D", image: "deathrun.png", link: "deathrun.html" },
+      { name: "AmongUs", image: "amongus.png", link: "amongus.html" },
+      { name: "Drivemad", image: "drivemad.png", link: "drivemad.html" },
+      { name: "Stick Archer", image: "archer.png", link: "archer.html" },
+      { name: "ROBLOX - DOWN", image: "robloxcover.png", link: "roblox.html" },
+      { name: "Snowball IO", image: "snowballio.png", link: "snowballio.html" },
+      { name: "GunSpin", image: "gunspin.png", link: "gunspin.html" },
+      { name: "1v1 lol", image: "1v1lol.png", link: "1v1lol" },
+      { name: "2048", image: "2048.png", link: "2048.html" },
+      { name: "Cookie Clicker", image: "cookieclicker.png", link: "cookieclicker.html" },
+      { name: "Hole IO", image: "holeio.png", link: "holeio.html" },
+      { name: "Justfall LOL", image: "justfall.png", link: "justfall.html" },
+      { name: "FNAF", image: "fnaf1.png", link: "fnaf1.html" },
+      { name: "Basketball Stars", image: "bballstars.png", link: "bballstars.html" },
+      { name: "Bitlife.", image: "bitlife.png", link: "bitlife.html" },
+      { name: "Bloxorz", image: "bloxorz.png", link: "bloxorz.html" },
+      { name: "Cut the Rope.", image: "cuttherope.png", link: "cuttherope.html" },
+      { name: "EaglercraftX", image: "eaglercraftx.png", link: "eaglercraftx.html" },
+      { name: "BuildNow GG", image: "buildnow.png", link: "https://playervpn.github.io/buildnowgamegg/" },
+      { name: "Elastic man", image: "elasticman.png", link: "elasticman.html" },
+      { name: "Retro Haunt", image: "retrohaunt.png", link: "retrohaunt.html" },
+      { name: "Chrome Dino", image: "chromedino.png", link: "chromedino.html" },
+      { name: "Slope", image: "slopegame.png", link: "slope" },
+      { name: "Tunnel Rush", image: "tunnelrush.png", link: "tunnelrush.html" },
+      { name: "Coreball", image: "coreballgame.png", link: "coreballgame.html" },
+      { name: "Pacman :)", image: "pacman.png", link: "pacman.html" },
+      { name: "Tictactoe", image: "tictactoe.png", link: "tictactoe" },
+      { name: "Doodle Jump", image: "doodlejump.png", link: "doodlejump" },
+      { name: "Bubble Shooter", image: "bubbleshooter.png", link: "bubbleshooter.html" },
+      { name: "Block Blast!", image: "blockblast.png", link: "https://playervpn.github.io/blockblast-unlocked/" },
+      { name: "Evil Glitch", image: "evilglitch.png", link: "evilglitch.html" },
+      { name: "Geometry Dash", image: "geometrydash.png", link: "geometrydash.html" },
+      { name: "Cube Field", image: "cubefieldgame.png", link: "cubefield" },
+      { name: "Backrooms", image: "backrooms.png", link: "backrooms" },
+      { name: "Paperio 3D", image: "paperio3.png", link: "paper-3" },
+      { name: "Territorial IO", image: "territorial.png", link: "teritorial.html" },
+      { name: "Cluster Rush", image: "clusterrush.png", link: "cluser-rush" },
+      { name: "SlitherIO Online", image: "slitherio-online.png", link: "slitherio-online.html" },
+      { name: "Baldis Basics", image: "baldis-basics.png", link: "baldis-basics" },
+      { name: "Moto X3M", image: "motox3m.png", link: "motox3m.html" },
+      { name: "Portal", image: "portal.png", link: "portal.html" },
+      { name: "The real SlitherIO", image: "therealsnakeio.png", link: "therealsnakeio.html" },
+      { name: "Drift Boss", image: "driftboss.png", link: "driftboss.html" },
+      { name: "Slope 2", image: "slope-2.png", link: "slope-2" },
+      { name: "Tiny Fishing", image: "tiny-fishing.png", link: "tiny-fishing.html" },
+      { name: "Achievement Unlocked", image: "achievementunlocked.png", link: "acheivmentunlocked.html" },
+      { name: "Monkey Mart", image: "monkeymart.png", link: "monkeymart.html" },
+      { name: "Stack", image: "stack.png", link: "stack.html" },
+      { name: "Stickman Hook", image: "stickmanhook.png", link: "stickmanhook.html" },
+      { name: "Super Mario 64", image: "supermario64.png", link: "supermario64.html" },
+    ];
+
+    function loadRecommendedGames() {
+      const recommendedContainer = document.getElementById('recommended-items');
+      recommendedContainer.innerHTML = ''; // Clear existing content
+
+      // Shuffle games and select random ones
+      const shuffledGames = games.sort(() => 0.5 - Math.random()).slice(0, 8);
+
+      shuffledGames.forEach(game => {
+        const gameElement = document.createElement('div');
+        gameElement.className = 'recommended-item';
+        gameElement.innerHTML = `<a href="${game.link}"><img src="${game.image}" alt="${game.name}"> ${game.name}</a>`;
+        recommendedContainer.appendChild(gameElement);
+      });
+    }
+  </script>
+
 </body>
 </html>
