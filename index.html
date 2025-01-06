@@ -694,7 +694,7 @@
             <h2>Bloxorz</h2>
             <p>Move around as a rectangle.</p>
         </div>
-        <div class="game-item reveal" onclick="openGame('cuttherrope.html', 'cuttherrope.html')">
+        <div class="game-item reveal" onclick="openGame('cuttherrope.html', 'cuttherope.html')">
             <img src="cuttherope.png" alt="Cut;Ropes">
             <h2>Cut the Rope.</h2>
             <p>Cut ropes.</p>
@@ -1032,7 +1032,7 @@
             <button class="cloak-button" onclick="closeSettings()">Close Settings</button>
         </div>
     </div>
-
+    
     <!-- Sidebar Toggle Icon -->
     <a href="javascript:void(0);" id="toggleSidebar" style="position: fixed; top: 20px; left: 20px; z-index: 999;">
         <img src="Assets/threelines.png" alt="Toggle Sidebar" style="width: 30px; height: auto;">
@@ -1060,11 +1060,13 @@
             <a href="https://orbitproxy.flarum.cloud/" class="sidebar-link" style="color: #ff69b4; text-decoration: none; font-weight: bold; font-size: 1.2em; display: flex; align-items: center; gap: 10px;">
                 <i class="fas fa-comments"></i> Forum
             </a>
+    
 
             <!-- GitHub Repo Link -->
             <a href="https://github.com/PlayerVPN/playervpn-game" target="_blank" class="sidebar-link" style="color: #ff69b4; text-decoration: none; font-weight: bold; font-size: 1.2em; display: flex; align-items: center; gap: 10px;">
                 <i class="fab fa-github"></i> GitHub
             </a>
+
         </div>
 
         <!-- Recommended Games Section -->
@@ -1123,7 +1125,7 @@
                 }
             });
         });
-
+        
         // Redirect on page load
         window.onload = function () {
             checkRedirect();
@@ -1226,7 +1228,7 @@
             }
         }
 
-        // Set volume (placeholder function)
+        // Set volume
         function setVolume(value) {
             console.log("Volume set to:", value);
             // Here you can implement functionality to adjust the game volume
@@ -1409,9 +1411,9 @@
         }
 
         // Search function for filtering game items
-        document.getElementById('gameSearchInput').addEventListener('input', function () {
+        document.getElementById('gameSearchInput').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase(); // Get the search term
-            const gameItems =.document.querySelectorAll('.game-item'); // Get all game items
+            const gameItems = document.querySelectorAll('.game-item'); // Get all game items
 
             gameItems.forEach(item => {
                 const gameTitle = item.querySelector('h2').textContent.toLowerCase(); // Get the game title
