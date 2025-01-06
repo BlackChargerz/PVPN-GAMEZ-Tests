@@ -488,7 +488,7 @@
 
         /* Volume Control Widget */
         .volume-widget {
-            display: none;
+            display: none; /* Initially hidden */
             position: absolute;
             bottom: 40px; /* Adjust position as needed */
             padding: 10px;
@@ -496,10 +496,7 @@
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             width: 100px; /* Fixed width for the volume widget */
-        }
-
-        .volume-container:hover .volume-widget {
-            display: block; /* Show widget on hover */
+            z-index: 10; /* Ensure it appears above the game modal */
         }
 
         /* Volume Slider */
@@ -562,10 +559,12 @@
         <div class="progress-label" id="progress-label">LVL 1</div>
     </div>
 
+
     <!-- Search bar container -->
     <div class="search-bar-container">
         <input type="text" id="gameSearchInput" placeholder="Search..." />
     </div>
+
 
     <div class="games-container" id="games-container">
         <!-- Game items -->
@@ -682,7 +681,7 @@
         <div class="game-item reveal" onclick="openGame('bballstars.html', 'bballstars.html')">
             <img src="bballstars.png" alt="Shoot;Bball">
             <h2>Basketball Stars</h2>
-            <p>Shoot baskets to win, featuring my glorius king LeBron</p>
+            <p>Shoot baskets to win, featuring my glorious king LeBron</p>
         </div>
         <div class="game-item reveal" onclick="openGame('bitlife.html', 'bitlife.html')">
             <img src="bitlife.png" alt="grow-up;get-a-life">
@@ -702,12 +701,12 @@
         <div class="game-item reveal" onclick="openGame('eaglercraftx.html', 'eaglercraftx.html')">
             <img src="eaglercraftx.png" alt="beta;minecraft">
             <h2>EaglercraftX</h2>
-            <p>Minecraft but browser based.</p>
+            <p>Minecraft but browser-based.</p>
         </div>
         <div class="game-item reveal" onclick="openGame('https://playervpn.github.io/buildnowgamegg/', 'https://playervpn.github.io/buildnowgamegg/')">
             <img src="buildnow.png" alt="browser;fortnite">
             <h2>BuildNow GG</h2>
-            <p>Fortnite But Browser Based.</p>
+            <p>Fortnite But Browser-Based.</p>
         </div>
         <div class="game-item reveal" onclick="openGame('elasticman.html', 'elasticman.html')">
             <img src="elasticman.png" alt="man;elastic">
@@ -942,7 +941,7 @@
         <div class="game-item reveal" onclick="openGame('flappy-bird', 'flappy-bird')">
             <img src="flappy-bird.png" alt="bird;retro">
             <h2>Flappy Bird</h2>
-            <p>Play flappy bird here online for free!</p>
+            <p>Play Flappy Bird here online for free!</p>
         </div>
         <div class="game-item reveal" onclick="openGame('subway-surfers', 'subway-surfers')">
             <img src="subway-surfers.png" alt="surfers;subways">
@@ -952,12 +951,12 @@
         <div class="game-item reveal" onclick="openGame('bladeball.html', 'bladeball.html')">
             <img src="bladeball.png" alt="ball;blade">
             <h2>Blade Ball</h2>
-            <p>A 3d clone of Roblox Bladeball!!!</p>
+            <p>A 3D clone of Roblox Bladeball!!!</p>
         </div>
         <div class="game-item reveal" onclick="openGame('tinysquare', 'tinysquare')">
             <img src="tinysquare.png" alt="square;tower">
             <h2>Big Tower Tiny Square</h2>
-            <p>Your a tiny square!</p>
+            <p>You're a tiny square!</p>
         </div>
         <div class="game-item reveal" onclick="openGame('ccrush', 'ccrush')">
             <img src="ccrush.png" alt="crush;candy">
@@ -967,7 +966,7 @@
         <div class="game-item reveal" onclick="openGame('counterstrike', 'counterstrike')">
             <img src="counterstrike.png" alt="counter;strike">
             <h2>Counter Strike</h2>
-            <p>Shoot things in this 3d, first person shooter.</p>
+            <p>Shoot things in this 3D first-person shooter.</p>
         </div>
         <div class="game-item reveal" onclick="openGame('helixjump', 'helixjump')">
             <img src="helixjump/helixjump.png" alt="helix;jump">
@@ -1000,9 +999,9 @@
 
             <!-- New Volume Control -->
             <div class="volume-container">
-                <i class="fas fa-volume-up volume-icon" title="Volume"></i>
-                <div class="volume-widget">
-                    <input type="range" class="volume-slider" min="0" max="100" value="50" onchange="setVolume(this.value);">
+                <i class="fas fa-volume-up volume-icon" title="Volume" onclick="toggleVolumeWidget();"></i>
+                <div class="volume-widget" id="volume-widget">
+                    <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="50" onchange="setVolume(this.value);">
                 </div>
             </div>
 
@@ -1077,354 +1076,363 @@
     </div>
 
     <!-- Inline JavaScript for Tab Cloak & Header Navigation -->
-    <script>
-        // Redirect logic to OAuth passkey page
-        const redirectToOAuth = "https://playervpn.github.io/playervpn-game/oauthpasskey";
-        const LAST_REDIRECT_TIME_KEY = "lastRedirectTime";
-        const TWENTY_MINUTES = 20 * 60 * 1000; // 20 minutes in milliseconds
+<script>
+    // Global volume variable
+    let currentVolume = 50;
 
-        function checkRedirect() {
-            const lastRedirectTime = localStorage.getItem(LAST_REDIRECT_TIME_KEY);
-            const now = new Date().getTime();
-
-            // Check if last redirect time exists and calculate time difference
-            if (!lastRedirectTime || now - lastRedirectTime > TWENTY_MINUTES) {
-                // Redirect and update last redirect time
-                localStorage.setItem(LAST_REDIRECT_TIME_KEY, now);
-                window.location.href = redirectToOAuth;
-            }
+    // Function to update the volume in the iframe
+    function setVolume(value) {
+        currentVolume = value;
+        const iframe = document.getElementById('game-iframe');
+        if (iframe.contentWindow && iframe.contentWindow.setVolume) {
+            iframe.contentWindow.setVolume(value / 100); // Assuming setVolume is available in the game
         }
+    }
 
-        // Wait for the DOM content to be fully loaded before adding event listeners
-        document.addEventListener('DOMContentLoaded', function () {
-            // Get the sidebar and toggle button elements
-            const sidebar = document.getElementById('sidebar');
-            const toggleButton = document.getElementById('toggleSidebar');
+    // Function to show the volume widget and auto-hide it after 3 seconds
+    function toggleVolumeWidget() {
+        const volumeWidget = document.getElementById('volume-widget');
+        volumeWidget.style.display = 'block'; // Show the volume widget
+        setTimeout(() => {
+            volumeWidget.style.display = 'none'; // Hide it after 3 seconds
+        }, 3000);
+    }
 
-            // Add animation-specific styles without overwriting existing styles
-            sidebar.style.transition = 'transform 0.3s ease'; // Smooth sliding animation for sidebar
-            sidebar.style.transform = 'translateX(-100%)'; // Ensure sidebar is off-screen initially
+    // Other existing JavaScript code (checkRedirect, toggleSidebar, etc.)
+    
+    // Redirect logic to OAuth passkey page
+    const redirectToOAuth = "https://playervpn.github.io/playervpn-game/oauthpasskey";
+    const LAST_REDIRECT_TIME_KEY = "lastRedirectTime";
+    const TWENTY_MINUTES = 20 * 60 * 1000; // 20 minutes in milliseconds
 
-            // Add transition for the button animation
-            toggleButton.style.transition = 'transform 0.3s ease'; // Smooth button animation
+    function checkRedirect() {
+        const lastRedirectTime = localStorage.getItem(LAST_REDIRECT_TIME_KEY);
+        const now = new Date().getTime();
 
-            // Toggle sidebar visibility with sliding animation
-            toggleButton.addEventListener('click', function () {
-                if (sidebar.style.transform === 'translateX(-100%)') {
-                    // Show sidebar with sliding animation
-                    sidebar.style.transform = 'translateX(0)';
+        // Check if last redirect time exists and calculate time difference
+        if (!lastRedirectTime || now - lastRedirectTime > TWENTY_MINUTES) {
+            // Redirect and update last redirect time
+            localStorage.setItem(LAST_REDIRECT_TIME_KEY, now);
+            window.location.href = redirectToOAuth;
+        }
+    }
 
-                    // Move the button to the right
-                    toggleButton.style.transform = 'translateX(200px)'; // Adjust as needed
-                } else {
-                    // Hide sidebar with sliding animation
-                    sidebar.style.transform = 'translateX(-100%)';
+    // Wait for the DOM content to be fully loaded before adding event listeners
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the sidebar and toggle button elements
+        const sidebar = document.getElementById('sidebar');
+        const toggleButton = document.getElementById('toggleSidebar');
 
-                    // Move the button back to the original position
-                    toggleButton.style.transform = 'translateX(0)';
-                }
-            });
-        });
-        
-        // Redirect on page load
-        window.onload = function () {
-            checkRedirect();
-            const title = localStorage.getItem("tabTitle");
-            const favicon = localStorage.getItem("tabFavicon");
+        // Add animation-specific styles without overwriting existing styles
+        sidebar.style.transition = 'transform 0.3s ease'; // Smooth sliding animation for sidebar
+        sidebar.style.transform = 'translateX(-100%)'; // Ensure sidebar is off-screen initially
 
-            // Update title and favicon if saved
-            if (title) {
-                document.title = title;
-            }
-            if (favicon) {
-                const link = document.createElement('link');
-                link.rel = 'icon';
-                link.href = favicon;
-                document.head.appendChild(link);
-            }
+        // Add transition for the button animation
+        toggleButton.style.transition = 'transform 0.3s ease'; // Smooth button animation
 
-            // Update the progress bar and load recommended games
-            updateProgressBar();
-            loadRecommendedGames();
-        };
+        // Toggle sidebar visibility with sliding animation
+        toggleButton.addEventListener('click', function () {
+            if (sidebar.style.transform === 'translateX(-100%)') {
+                // Show sidebar with sliding animation
+                sidebar.style.transform = 'translateX(0)';
 
-        // Redirect on pressing backtick key
-        document.addEventListener('keydown', function (event) {
-            if (event.key === '`') {
-                window.location.href = redirectToOAuth;
+                // Move the button to the right
+                toggleButton.style.transform = 'translateX(200px)'; // Adjust as needed
+            } else {
+                // Hide sidebar with sliding animation
+                sidebar.style.transform = 'translateX(-100%)';
+
+                // Move the button back to the original position
+                toggleButton.style.transform = 'translateX(0)';
             }
         });
+    });
 
-        let progress = parseInt(localStorage.getItem('progress')) || 0; // Read progress from localStorage
-        const totalGames = 100; // 100% progress corresponds to 100 actions
-        const refreshRate = 100; // Level changes every 100 actions
-        const progressBar = document.getElementById('progress-bar');
-        const progressLabel = document.getElementById('progress-label');
+    // Redirect on page load
+    window.onload = function () {
+        checkRedirect();
+        const title = localStorage.getItem("tabTitle");
+        const favicon = localStorage.getItem("tabFavicon");
 
-        // Initialize the progress bar and visit counter
-        updateProgressBar();
-        updateVisitCounter();
-
-        // Update progress bar and level label
-        function updateProgressBar() {
-            const percent = Math.min((progress / totalGames) * 100, 100); // Cap at 100%
-            progressBar.style.width = percent + '%';
-            const currentLevel = Math.floor(progress / refreshRate) + 1; // Level up every 100%
-            progressLabel.textContent = `LVL ${currentLevel}`;
-        }
-
-        async function updateVisitCounter() {
-            // Increment visit count
-            await fetch('/api/visit-count', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({}),
-            });
-
-            // Fetch the updated visit count
-            const response = await fetch('/api/visit-count');
-            const data = await response.json();
-            document.getElementById('visit-counter').textContent = `Total Visits: ${data.count}`;
-        }
-
-        // Function to open a game
-        function openGame(gameFile, downloadFile) {
-            if (progress < totalGames) { // Increment only if below max
-                progress++;
-                localStorage.setItem('progress', progress); // Save progress to local storage
-                updateProgressBar(); // Update progress on UI
-            }
-            document.getElementById('game-iframe').src = gameFile; // Set iframe source
-            document.getElementById('game-modal').style.display = 'block'; // Show modal
-            document.getElementById('download-button').setAttribute('href', downloadFile); // Set download link
-            document.getElementById('download-button').setAttribute('download', downloadFile); // Download attribute
-        }
-
-        // Close game modal
-        function closeGame() {
-            document.getElementById('game-modal').style.display = 'none'; // Hide modal
-            document.getElementById('game-iframe').src = ''; // Clear iframe source
-        }
-
-        // Open game in a new tab
-        function openGameInNewTab() {
-            const gameFile = document.getElementById('game-iframe').src; // Get the current game URL
-            if (gameFile) {
-                window.open(gameFile, '_blank'); // Open in new tab
-            }
-        }
-
-        // Toggle full-screen mode only for the game
-        function toggleFullScreen() {
-            const iframe = document.getElementById('game-iframe');
-            if (iframe.requestFullscreen) {
-                iframe.requestFullscreen();
-            } else if (iframe.mozRequestFullScreen) {
-                iframe.mozRequestFullScreen();
-            } else if (iframe.webkitRequestFullscreen) {
-                iframe.webkitRequestFullscreen();
-            } else if (iframe.msRequestFullscreen) {
-                iframe.msRequestFullscreen();
-            }
-        }
-
-        // Set volume
-        function setVolume(value) {
-            console.log("Volume set to:", value);
-            // Here you can implement functionality to adjust the game volume
-        }
-
-        // Refresh the game
-        function refreshGame() {
-            const gameFile = document.getElementById('game-iframe').src; // Get current game URL
-            if (gameFile) {
-                openGame(gameFile, gameFile); // Re-open the game
-            }
-        }
-
-        // Open settings modal
-        function openSettings() {
-            document.getElementById('settings-modal').style.display = 'flex';
-        }
-
-        // Close settings modal
-        function closeSettings() {
-            document.getElementById('settings-modal').style.display = 'none';
-        }
-
-        // Change Tab Cloak
-        function changeTabCloak() {
-            const selectedValue = document.getElementById('tab-cloak-select').value;
-            let title, favicon;
-
-            // Set title and favicon based on selection
-            switch (selectedValue) {
-                case 'schoology':
-                    title = "Home | Schoology";
-                    favicon = 'https://www.betterbuys.com/wp-content/uploads/2016/11/schoology-logo.png';
-                    break;
-                case 'google':
-                    title = "Home | Google";
-                    favicon = 'https://www.google.com/favicon.ico';
-                    break;
-                case 'google_classroom':
-                    title = "Home | Google Classroom";
-                    favicon = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Google_Classroom_icon.svg/2048px-Google_Classroom_icon.svg.png';
-                    break;
-                case 'edia':
-                    title = "Edia";
-                    favicon = 'ediamath.png'; // Set favicon for Edia
-                    break;
-                default:
-                    title = "Orbit.";
-                    favicon = 'https://i.ibb.co/j52f5kD/pvpn-favi.png';
-                    break;
-            }
-
-            // Save settings to localStorage
-            localStorage.setItem("tabTitle", title);
-            localStorage.setItem("tabFavicon", favicon);
-
-            // Update the document title and favicon
+        // Update title and favicon if saved
+        if (title) {
             document.title = title;
-
-            const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+        }
+        if (favicon) {
+            const link = document.createElement('link');
             link.rel = 'icon';
             link.href = favicon;
-            document.getElementsByTagName('head')[0].appendChild(link);
+            document.head.appendChild(link);
         }
 
-        // Service Worker registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').then((registration) => {
-                    console.log('Service Worker registered with scope:', registration.scope);
-                }).catch((error) => {
-                    console.log('Service Worker registration failed:', error);
-                });
-            });
+        // Update the progress bar and load recommended games
+        updateProgressBar();
+        loadRecommendedGames();
+    };
+
+    // Redirect on pressing backtick key
+    document.addEventListener('keydown', function (event) {
+        if (event.key === '`') {
+            window.location.href = redirectToOAuth;
+        }
+    });
+
+    let progress = parseInt(localStorage.getItem('progress')) || 0; // Read progress from localStorage
+    const totalGames = 100; // 100% progress corresponds to 100 actions
+    const refreshRate = 100; // Level changes every 100 actions
+    const progressBar = document.getElementById('progress-bar');
+    const progressLabel = document.getElementById('progress-label');
+
+    // Initialize the progress bar and visit counter
+    updateProgressBar();
+    updateVisitCounter();
+
+    // Update progress bar and level label
+    function updateProgressBar() {
+        const percent = Math.min((progress / totalGames) * 100, 100); // Cap at 100%
+        progressBar.style.width = percent + '%';
+        const currentLevel = Math.floor(progress / refreshRate) + 1; // Level up every 100%
+        progressLabel.textContent = `LVL ${currentLevel}`;
+    }
+
+    async function updateVisitCounter() {
+        // Increment visit count
+        await fetch('/api/visit-count', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({}),
+        });
+
+        // Fetch the updated visit count
+        const response = await fetch('/api/visit-count');
+        const data = await response.json();
+        document.getElementById('visit-counter').textContent = `Total Visits: ${data.count}`;
+    }
+
+    // Function to open a game
+    function openGame(gameFile, downloadFile) {
+        if (progress < totalGames) { // Increment only if below max
+            progress++;
+            localStorage.setItem('progress', progress); // Save progress to local storage
+            updateProgressBar(); // Update progress on UI
+        }
+        document.getElementById('game-iframe').src = gameFile; // Set iframe source
+        document.getElementById('game-modal').style.display = 'block'; // Show modal
+        document.getElementById('download-button').setAttribute('href', downloadFile); // Set download link
+        document.getElementById('download-button').setAttribute('download', downloadFile); // Download attribute
+    }
+
+    // Close game modal
+    function closeGame() {
+        document.getElementById('game-modal').style.display = 'none'; // Hide modal
+        document.getElementById('game-iframe').src = ''; // Clear iframe source
+    }
+
+    // Open game in a new tab
+    function openGameInNewTab() {
+        const gameFile = document.getElementById('game-iframe').src; // Get the current game URL
+        if (gameFile) {
+            window.open(gameFile, '_blank'); // Open in new tab
+        }
+    }
+
+    // Toggle full-screen mode only for the game
+    function toggleFullScreen() {
+        const iframe = document.getElementById('game-iframe');
+        if (iframe.requestFullscreen) {
+            iframe.requestFullscreen();
+        } else if (iframe.mozRequestFullScreen) {
+            iframe.mozRequestFullScreen();
+        } else if (iframe.webkitRequestFullscreen) {
+            iframe.webkitRequestFullscreen();
+        } else if (iframe.msRequestFullscreen) {
+            iframe.msRequestFullscreen();
+        }
+    }
+
+    // Open settings modal
+    function openSettings() {
+        document.getElementById('settings-modal').style.display = 'flex';
+    }
+
+    // Close settings modal
+    function closeSettings() {
+        document.getElementById('settings-modal').style.display = 'none';
+    }
+
+    // Change Tab Cloak
+    function changeTabCloak() {
+        const selectedValue = document.getElementById('tab-cloak-select').value;
+        let title, favicon;
+
+        // Set title and favicon based on selection
+        switch (selectedValue) {
+            case 'schoology':
+                title = "Home | Schoology";
+                favicon = 'https://www.betterbuys.com/wp-content/uploads/2016/11/schoology-logo.png';
+                break;
+            case 'google':
+                title = "Home | Google";
+                favicon = 'https://www.google.com/favicon.ico';
+                break;
+            case 'google_classroom':
+                title = "Home | Google Classroom";
+                favicon = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Google_Classroom_icon.svg/2048px-Google_Classroom_icon.svg.png';
+                break;
+            case 'edia':
+                title = "Edia";
+                favicon = 'ediamath.png'; // Set favicon for Edia
+                break;
+            default:
+                title = "Orbit.";
+                favicon = 'https://i.ibb.co/j52f5kD/pvpn-favi.png';
+                break;
         }
 
-        // Sidebar visibility for game pages
-        if (window.location.pathname !== '/playervpn-game/index.html') {
-            document.getElementById('sidebar').style.display = 'block';
-        }
+        // Save settings to localStorage
+        localStorage.setItem("tabTitle", title);
+        localStorage.setItem("tabFavicon", favicon);
 
-        // Load settings from localStorage on page load
-        window.onload = function () {
-            const title = localStorage.getItem("tabTitle");
-            const favicon = localStorage.getItem("tabFavicon");
+        // Update the document title and favicon
+        document.title = title;
 
-            // Update title and favicon if saved
-            if (title) {
-                document.title = title;
-            }
-            if (favicon) {
-                const link = document.createElement('link');
-                link.rel = 'icon';
-                link.href = favicon;
-                document.head.appendChild(link);
-            }
+        const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+        link.rel = 'icon';
+        link.href = favicon;
+        document.getElementsByTagName('head')[0].appendChild(link);
+    }
 
-            // Update the progress bar and load recommended games
-            updateProgressBar();
-            loadRecommendedGames();
-
-            // First time visit handling
-            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-            let isFirstVisit = localStorage.getItem('firstVisit') === null;
-
-            if (!isLoggedIn) {
-                // Redirect to login page
-                window.location.href = 'login.html';
-            } else {
-                checkRedirect(); // Check for redirect on first visit
-
-                if (isFirstVisit) {
-                    document.getElementById('welcome-overlay').style.display = 'flex';
-                    setTimeout(() => {
-                        document.getElementById('welcome-content').style.opacity = 1; // Fade in content 
-                    }, 100); // 3 seconds before showing welcome content
-                } else {
-                    document.getElementById('welcome-overlay').style.display = 'none'; // Hides if not first visit
-                }
-
-                // Add event listeners for hiding welcome overlay
-                document.addEventListener('click', fadeOutWelcome);
-                document.addEventListener('keydown', fadeOutWelcome);
-
-                function fadeOutWelcome() {
-                    if (isFirstVisit) {
-                        isFirstVisit = false;
-                        localStorage.setItem('firstVisit', 'true');
-                        const overlay = document.getElementById('welcome-overlay');
-                        overlay.style.opacity = 0; // Start fading out overlay
-                        setTimeout(() => {
-                            overlay.style.display = 'none'; // Hide overlay after fade out
-                        }, 1000); // Match with the opacity transition
-                    }
-                }
-
-                // Smooth scroll appearance
-                const elements = document.querySelectorAll('.reveal');
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('visible'); // Add visible class when in view
-                        }
-                    });
-                }, { threshold: 0.1 });
-
-                elements.forEach(element => {
-                    observer.observe(element); // Observe each element
-                });
-            }
-        };
-
-        // Load recommended games from the array
-        const games = [
-            { name: "Snowrider 3D", image: "snowrider.png", link: "snowrider.html" },
-            { name: "Time Shooter 3", image: "timeshooter3.png", link: "timeshooter3.html" },
-            { name: "Smash Karts", image: "smashkarts.png", link: "smashkarts.html" },
-            { name: "Stick Duals", image: "stickdual.png", link: "stickdual.html" },
-            { name: "Mario Bros.", image: "mario.png", link: "mario.html" },
-            { name: "Soccer Game", image: "football.png", link: "football.html" },
-            { name: "Bob The Robber", image: "robber.png", link: "robber.html" },
-            { name: "Death Run 3D", image: "deathrun.png", link: "deathrun.html" },
-            { name: "AmongUs", image: "amongus.png", link: "amongus.html" },
-            { name: "Drivemad", image: "drivemad.png", link: "drivemad.html" },
-        ];
-
-        function loadRecommendedGames() {
-            const recommendedContainer = document.getElementById('recommended-items');
-            recommendedContainer.innerHTML = ''; // Clear existing content
-
-            // Shuffle games
-            const shuffledGames = games.sort(() => 0.5 - Math.random()).slice(0, 8);
-
-            shuffledGames.forEach(game => {
-                const gameElement = document.createElement('div');
-                gameElement.className = 'recommended-item';
-                gameElement.innerHTML = `<a href="${game.link}"><img src="${game.image}" alt="${game.name}"> ${game.name}</a>`;
-                recommendedContainer.appendChild(gameElement);
-            });
-        }
-
-        // Search function for filtering game items
-        document.getElementById('gameSearchInput').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase(); // Get the search term
-            const gameItems = document.querySelectorAll('.game-item'); // Get all game items
-
-            gameItems.forEach(item => {
-                const gameTitle = item.querySelector('h2').textContent.toLowerCase(); // Get the game title
-                if (gameTitle.includes(searchTerm)) {
-                    item.style.display = 'block'; // Ensure the item is shown (block allows it to stay in grid layout)
-                } else {
-                    item.style.display = 'none'; // Hide the item
-                }
+    // Service Worker registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').then((registration) => {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch((error) => {
+                console.log('Service Worker registration failed:', error);
             });
         });
-    </script>
+    }
+
+    // Sidebar visibility for game pages
+    if (window.location.pathname !== '/playervpn-game/index.html') {
+        document.getElementById('sidebar').style.display = 'block';
+    }
+
+    // Load settings from localStorage on page load
+    window.onload = function () {
+        const title = localStorage.getItem("tabTitle");
+        const favicon = localStorage.getItem("tabFavicon");
+
+        // Update title and favicon if saved
+        if (title) {
+            document.title = title;
+        }
+        if (favicon) {
+            const link = document.createElement('link');
+            link.rel = 'icon';
+            link.href = favicon;
+            document.head.appendChild(link);
+        }
+
+        // Update the progress bar and load recommended games
+        updateProgressBar();
+        loadRecommendedGames();
+
+        // First time visit handling
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        let isFirstVisit = localStorage.getItem('firstVisit') === null;
+
+        if (!isLoggedIn) {
+            // Redirect to login page
+            window.location.href = 'login.html';
+        } else {
+            checkRedirect(); // Check for redirect on first visit
+
+            if (isFirstVisit) {
+                document.getElementById('welcome-overlay').style.display = 'flex';
+                setTimeout(() => {
+                    document.getElementById('welcome-content').style.opacity = 1; // Fade in content 
+                }, 100); // 3 seconds before showing welcome content
+            } else {
+                document.getElementById('welcome-overlay').style.display = 'none'; // Hides if not first visit
+            }
+
+            // Add event listeners for hiding welcome overlay
+            document.addEventListener('click', fadeOutWelcome);
+            document.addEventListener('keydown', fadeOutWelcome);
+
+            function fadeOutWelcome() {
+                if (isFirstVisit) {
+                    isFirstVisit = false;
+                    localStorage.setItem('firstVisit', 'true');
+                    const overlay = document.getElementById('welcome-overlay');
+                    overlay.style.opacity = 0; // Start fading out overlay
+                    setTimeout(() => {
+                        overlay.style.display = 'none'; // Hide overlay after fade out
+                    }, 1000); // Match with the opacity transition
+                }
+            }
+
+            // Smooth scroll appearance
+            const elements = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible'); // Add visible class when in view
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            elements.forEach(element => {
+                observer.observe(element); // Observe each element
+            });
+        }
+    };
+
+    // Load recommended games from the array
+    const games = [
+        { name: "Snowrider 3D", image: "snowrider.png", link: "snowrider.html" },
+        { name: "Time Shooter 3", image: "timeshooter3.png", link: "timeshooter3.html" },
+        { name: "Smash Karts", image: "smashkarts.png", link: "smashkarts.html" },
+        { name: "Stick Duals", image: "stickdual.png", link: "stickdual.html" },
+        { name: "Mario Bros.", image: "mario.png", link: "mario.html" },
+        { name: "Soccer Game", image: "football.png", link: "football.html" },
+        { name: "Bob The Robber", image: "robber.png", link: "robber.html" },
+        { name: "Death Run 3D", image: "deathrun.png", link: "deathrun.html" },
+        { name: "AmongUs", image: "amongus.png", link: "amongus.html" },
+        { name: "Drivemad", image: "drivemad.png", link: "drivemad.html" },
+    ];
+
+    function loadRecommendedGames() {
+        const recommendedContainer = document.getElementById('recommended-items');
+        recommendedContainer.innerHTML = ''; // Clear existing content
+
+        // Shuffle games
+        const shuffledGames = games.sort(() => 0.5 - Math.random()).slice(0, 8);
+
+        shuffledGames.forEach(game => {
+            const gameElement = document.createElement('div');
+            gameElement.className = 'recommended-item';
+            gameElement.innerHTML = `<a href="${game.link}"><img src="${game.image}" alt="${game.name}"> ${game.name}</a>`;
+            recommendedContainer.appendChild(gameElement);
+        });
+    }
+
+    // Search function for filtering game items
+    document.getElementById('gameSearchInput').addEventListener('input', function () {
+        const searchTerm = this.value.toLowerCase(); // Get the search term
+        const gameItems = document.querySelectorAll('.game-item'); // Get all game items
+
+        gameItems.forEach(item => {
+            const gameTitle = item.querySelector('h2').textContent.toLowerCase(); // Get the game title
+            if (gameTitle.includes(searchTerm)) {
+                item.style.display = 'block'; // Ensure the item is shown (block allows it to stay in grid layout)
+            } else {
+                item.style.display = 'none'; // Hide the item
+            }
+        });
+    });
+</script>
 </body>
 
 </html>
