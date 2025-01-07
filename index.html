@@ -18,6 +18,7 @@
     <!-- Particles.js -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
+    <!-- Redesigned Inline CSS for New Styling -->
     <style>
         /* General Reset */
         * {
@@ -27,7 +28,7 @@
         }
 
         body {
-            background-image: url('Assets/bg2.png'); /* Set the background image */
+            background-image: url('Assets/spacebackground.jpg'); /* Set the background image */
             background-size: cover; /* Ensure the image covers the entire screen */
             background-position: center; /* Center the image */
             background-repeat: no-repeat; /* Prevent the image from repeating */
@@ -41,6 +42,27 @@
             padding: 20px;
             overflow-x: hidden;
             position: relative;
+        }
+
+        /* Custom Cursor Styles */
+        body {
+            cursor: none; /* Hide default cursor */
+        }
+
+        .custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #ff00ff, #ff007f, #007bff);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 0 15px 5px rgba(255, 0, 255, 0.5),
+                        0 0 30px 10px rgba(255, 0, 127, 0.3),
+                        0 0 50px 20px rgba(0, 123, 255, 0.2);
+            transform: translate(-50%, -50%); /* Ensure the cursor is centered */
         }
 
         /* Particles Background */
@@ -338,9 +360,9 @@
         }
 
         .game-item img {
-            width: 100%; /* Ensures image fills the width of the card */
-            height: 200px; /* Fixes height for rectangular images */
-            object-fit: cover; /* Makes sure the image maintains aspect ratio and fits */
+            width: 100%;            /* Ensures image fills the width of the card */
+            height: 200px;          /* Fixes height for rectangular images */
+            object-fit: cover;      /* Makes sure the image maintains aspect ratio and fits */
             border-bottom: 2px solid #ff69b4;
             transition: filter 0.3s;
         }
@@ -465,78 +487,186 @@
             border-radius: 10px; /* Rounded iframe corners */
         }
 
-        /* Volume Control Styles */
-        .volume-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-            margin-left: 10px; /* Add space between icons */
+        /* Modal Container */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.8); /* Darker background with opacity */
         }
 
-        /* Volume Icon */
-        .volume-icon {
-            cursor: pointer;
-            color: white;
-            font-size: 1.5em;
-            transition: transform 0.2s;
+        /* Modal Content */
+        .modal-content {
+            background-color: #1a1a1a; /* Dark background */
+            margin: 10% auto; /* Center it */
+            padding: 20px;
+            border: 1px solid #800080; /* Purple border */
+            width: 80%; /* Width of the modal */
+            max-width: 500px; /* Max width for responsiveness */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .volume-icon:hover {
-            transform: scale(1.2);
+        /* Modal Title */
+        .settings-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #ff69b4; /* Pink title */
+            text-align: center;
         }
 
-        /* Volume Control Widget */
-        .volume-widget {
-            display: none; /* Initially hidden */
-            position: absolute;
-            bottom: 40px; /* Adjust position as needed */
+        /* Dropdown */
+        .dropdown {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #tab-cloak-select {
             padding: 10px;
-            background: rgba(50, 50, 70, 0.9);
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            width: 100px; /* Fixed width for the volume widget */
-            z-index: 10; /* Ensure it appears above the game modal */
-        }
-
-        /* Volume Slider */
-        .volume-slider {
             width: 100%;
-            margin-top: 5px;
-            -webkit-appearance: none;
-            background: transparent;
+            max-width: 300px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
             outline: none;
+            transition: border-color 0.3s;
         }
 
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 12px;
-            width: 12px;
-            background: #ff69b4; /* Pink thumb */
+        #tab-cloak-select:focus {
+            border-color: #ff69b4; /* Pink focus border */
+        }
+
+        /* Cloak Button */
+        .cloak-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: #fff;
+            background-color: #800080; /* Purple button */
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
-            border-radius: 50%; /* Round slider thumb */
+            transition: background-color 0.3s;
         }
 
-        .volume-slider::-webkit-slider-runnable-track {
-            height: 5px;
-            background: #444; /* Track color */
-            border-radius: 5px;
+        .cloak-button:hover {
+            background-color: #ff69b4; /* Pink hover effect */
         }
 
-        /* Refresh Icon */
-        .refresh-icon {
-            cursor: pointer;
+        .cloak-button:active {
+            background-color: #ff1493; /* Darker pink active effect */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .modal-content {
+                width: 90%;
+                margin: 20% auto;
+            }
+
+            .settings-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Header Styling */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
             color: white;
-            font-size: 1.5em;
-            margin-left: 10px; /* Spacing next to volume icon */
+            position: relative;
+            margin-bottom: 10px; /* Minimal space below the header */
         }
 
-        .refresh-icon:hover {
-            transform: scale(1.2);
+        /* Logo Styling */
+        header img {
+            width: 500px; /* Very large logo */
+            height: auto;
+            margin-bottom: -10px; /* Negative margin to bring the text closer to the logo */
         }
+
+        /* Title Styling */
+        header h1 {
+            font-size: 3.5rem; /* Larger title */
+            margin: 0; /* No margin, minimal space */
+            font-weight: bold;
+            font-family: 'Poppins', sans-serif;
+            color: #ff69b4;
+        }
+
+        /* Subtitle Styling */
+        header h5 {
+            font-size: 1.5rem; /* Subtitle size */
+            margin-top: 0; /* No space between h1 and h5 */
+            font-weight: bold;
+            font-family: 'Poppins', sans-serif;
+            color: #ffe6f7;
+        }
+
+        /* Subtitle Styling */
+        header h5 {
+            font-size: 1.5rem; /* Subtitle size */
+            margin-top: 0; /* No space between h1 and h5 */
+            color: #ffe6f7;
+            font-weight: 300;
+        }
+
+        .search-bar-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            padding: 0 15px;
+            text-align: center;
+            position: relative; /* Enables absolute positioning for child elements */
+            z-index: 10; /* Ensures the container stays above other elements */
+        }
+
+        #gameSearchInput {
+            width: 50%;
+            padding: 10px 40px 10px 40px; /* Adjust padding for the icon */
+            font-size: 1rem;
+            color: #000; /* Black text */
+            background-color: #fff; /* White background */
+            border: 2px solid #800080;
+            border-radius: 25px; /* Rounded corners */
+            margin-top: 10px;
+            outline: none;
+            transition: border-color 0.3s ease-in-out;
+            position: relative;
+        }
+
+        #gameSearchInput:focus {
+            border-color: #ff69b4;
+        }
+
+        /* Font Awesome search icon styling */
+        .search-icon {
+            position: absolute;
+            top: 50%;
+            left: 25%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2rem;
+            color: #000; /* Black icon */
+            pointer-events: none; /* Prevents interaction with the icon */
+        }
+
     </style>
 </head>
 
 <body>
+    <div class="custom-cursor"></div>
     <div id="particles-js"></div>
 
     <!-- Welcome Overlay -->
@@ -678,7 +808,7 @@
         <div class="game-item reveal" onclick="openGame('bballstars.html', 'bballstars.html')">
             <img src="bballstars.png" alt="Shoot;Bball">
             <h2>Basketball Stars</h2>
-            <p>Shoot baskets to win, featuring my glorius king LeBron</p>
+            <p>Shoot baskets to win, featuring my glorious king LeBron</p>
         </div>
         <div class="game-item reveal" onclick="openGame('bitlife.html', 'bitlife.html')">
             <img src="bitlife.png" alt="grow-up;get-a-life">
@@ -711,7 +841,7 @@
             <p>Pull his face</p>
         </div>
         <div class="game-item reveal" onclick="openGame('retrohaunt.html', 'retrohaunt.html')">
-            <img src="retrohaunt.png" alt="hanted;retro">
+            <img src="retrohaunt.png" alt="hunted;retro">
             <h2>Retro Haunt</h2>
             <p>A fun retro game, entertain yourself</p>
         </div>
@@ -923,12 +1053,12 @@
         <div class="game-item reveal" onclick="openGame('tombofthemask.html', 'tombofthemask.html')">
             <img src="tombofthemask.png" alt="mask;tombofthe">
             <h2>Tomb of the Mask</h2>
-            <p>Tomb of the Mask develops by Happymagenta UAB is a fast-paced, arcade-style game.</p>
+            <p>Tomb of the Mask develop by Happymagenta UAB is a fast-paced, arcade-style game.</p>
         </div>
         <div class="game-item reveal" onclick="openGame('yohoho', 'yohoho')">
             <img src="yohoho.png" alt="yohoho;io">
             <h2>Yohoho io</h2>
-            <p>Play now in this pirate-themed battle royal!</p>
+            <p>Play now in this pirate themed battle royal!</p>
         </div>
         <div class="game-item reveal" onclick="openGame('Retrobowl', 'Retrobowl')">
             <img src="retrobowl.png" alt="bowl;retro">
@@ -938,7 +1068,7 @@
         <div class="game-item reveal" onclick="openGame('flappy-bird', 'flappy-bird')">
             <img src="flappy-bird.png" alt="bird;retro">
             <h2>Flappy Bird</h2>
-            <p>Play Flappy Bird here online for free!</p>
+            <p>Play flappy bird here online for free!</p>
         </div>
         <div class="game-item reveal" onclick="openGame('subway-surfers', 'subway-surfers')">
             <img src="subway-surfers.png" alt="surfers;subways">
@@ -948,12 +1078,12 @@
         <div class="game-item reveal" onclick="openGame('bladeball.html', 'bladeball.html')">
             <img src="bladeball.png" alt="ball;blade">
             <h2>Blade Ball</h2>
-            <p>A 3D clone of Roblox Bladeball!!!</p>
+            <p>A 3d clone of Roblox Bladeball!!!</p>
         </div>
         <div class="game-item reveal" onclick="openGame('tinysquare', 'tinysquare')">
             <img src="tinysquare.png" alt="square;tower">
             <h2>Big Tower Tiny Square</h2>
-            <p>You're a tiny square!</p>
+            <p>Your a tiny square!</p>
         </div>
         <div class="game-item reveal" onclick="openGame('ccrush', 'ccrush')">
             <img src="ccrush.png" alt="crush;candy">
@@ -963,7 +1093,7 @@
         <div class="game-item reveal" onclick="openGame('counterstrike', 'counterstrike')">
             <img src="counterstrike.png" alt="counter;strike">
             <h2>Counter Strike</h2>
-            <p>Shoot things in this 3D first-person shooter.</p>
+            <p>Shoot things in this 3d, first person shooter.</p>
         </div>
         <div class="game-item reveal" onclick="openGame('helixjump', 'helixjump')">
             <img src="helixjump/helixjump.png" alt="helix;jump">
@@ -993,17 +1123,6 @@
             <i class="fas fa-download" id="download-button" download="" title="Download Game"></i>
             <i class="fas fa-key" onclick="window.open('https://learn.lcps.org/', '_blank');" title="Key"></i>
             <i class="fas fa-expand-arrows-alt" onclick="toggleFullScreen();" title="Full Screen"></i>
-            
-            <!-- New Volume Control -->
-            <div class="volume-container">
-                <i class="fas fa-volume-up volume-icon" title="Volume" onclick="toggleVolumeWidget();"></i>
-                <div class="volume-widget" id="volume-widget">
-                    <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="50" onchange="setVolume(this.value);">
-                </div>
-            </div>
-
-            <!-- New Refresh Icon -->
-            <i class="fas fa-sync refresh-icon" onclick="refreshGame();" title="Refresh Game"></i>
         </div>
     </div>
 
@@ -1056,11 +1175,12 @@
             <a href="https://orbitproxy.flarum.cloud/" class="sidebar-link" style="color: #ff69b4; text-decoration: none; font-weight: bold; font-size: 1.2em; display: flex; align-items: center; gap: 10px;">
                 <i class="fas fa-comments"></i> Forum
             </a>
-    
+
             <!-- GitHub Repo Link -->
             <a href="https://github.com/PlayerVPN/playervpn-game" target="_blank" class="sidebar-link" style="color: #ff69b4; text-decoration: none; font-weight: bold; font-size: 1.2em; display: flex; align-items: center; gap: 10px;">
                 <i class="fab fa-github"></i> GitHub
             </a>
+
         </div>
 
         <!-- Recommended Games Section -->
@@ -1072,29 +1192,6 @@
 
     <!-- Inline JavaScript for Tab Cloak & Header Navigation -->
     <script>
-        // Global volume variable
-        let currentVolume = 50; // Default volume
-
-        // Function to update the volume in the iframe
-        function setVolume(value) {
-            currentVolume = value;
-            const iframe = document.getElementById('game-iframe');
-            if (iframe.contentWindow && iframe.contentWindow.setVolume) {
-                iframe.contentWindow.setVolume(value / 100); // Assuming setVolume is available in the game
-            }
-        }
-
-        // Function to show the volume widget and auto-hide it after 3 seconds
-        function toggleVolumeWidget() {
-            const volumeWidget = document.getElementById('volume-widget');
-            volumeWidget.style.display = 'block'; // Show the volume widget
-
-            // Hide the widget after 3 seconds
-            setTimeout(() => {
-                volumeWidget.style.display = 'none'; // Hide it after 3 seconds
-            }, 3000);
-        }
-
         // Redirect logic to OAuth passkey page
         const redirectToOAuth = "https://playervpn.github.io/playervpn-game/oauthpasskey";
         const LAST_REDIRECT_TIME_KEY = "lastRedirectTime";
@@ -1130,11 +1227,13 @@
                 if (sidebar.style.transform === 'translateX(-100%)') {
                     // Show sidebar with sliding animation
                     sidebar.style.transform = 'translateX(0)';
-                    toggleButton.style.transform = 'translateX(200px)'; // Move the button to the right
+                    // Move the button to the right
+                    toggleButton.style.transform = 'translateX(200px)'; // Adjust as needed
                 } else {
                     // Hide sidebar with sliding animation
                     sidebar.style.transform = 'translateX(-100%)';
-                    toggleButton.style.transform = 'translateX(0)'; // Move the button back to the original position
+                    // Move the button back to the original position
+                    toggleButton.style.transform = 'translateX(0)';
                 }
             });
         });
@@ -1410,46 +1509,36 @@
         }
 
         // Search function for filtering game items
-        document.getElementById('gameSearchInput').addEventListener('input', function () {
+        document.getElementById('gameSearchInput').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase(); // Get the search term
             const gameItems = document.querySelectorAll('.game-item'); // Get all game items
 
             gameItems.forEach(item => {
                 const gameTitle = item.querySelector('h2').textContent.toLowerCase(); // Get the game title
                 if (gameTitle.includes(searchTerm)) {
-                    item.style.display = 'block'; // Ensure the item is shown
+                    item.style.display = 'block'; // Ensure the item is shown (block allows it to stay in grid layout)
                 } else {
                     item.style.display = 'none'; // Hide the item
                 }
             });
         });
 
-        // Video volume control
-        function setVolume(value) {
-            const iframe = document.getElementById('game-iframe');
-            currentVolume = value;
-            // Adjust the volume attribute or method in the iframe's game if available
-            if (iframe.contentWindow && iframe.contentWindow.setVolume) {
-                iframe.contentWindow.setVolume(value / 100);
-            }
-        }
+        // Custom Cursor Functionality
+        const cursor = document.querySelector('.custom-cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = `${e.pageX}px`;
+            cursor.style.top = `${e.pageY}px`;
+        });
 
-        // Show volume widget and automatically hide it after 3 seconds
-        function toggleVolumeWidget() {
-            const volumeWidget = document.getElementById('volume-widget');
-            volumeWidget.style.display = 'block'; // Show the widget
-            setTimeout(() => {
-                volumeWidget.style.display = 'none'; // Hide it after 3 seconds
-            }, 3000);
-        }
+        // Hide cursor when leaving the window
+        document.addEventListener('mouseleave', () => {
+            cursor.style.display = 'none';
+        });
 
-        // Refresh game
-        function refreshGame() {
-            const gameFile = document.getElementById('game-iframe').src; // Get current game URL
-            if (gameFile) {
-                openGame(gameFile, gameFile); // Re-open the game to refresh
-            }
-        }
+        // Show cursor when entering the window
+        document.addEventListener('mouseenter', () => {
+            cursor.style.display = 'block';
+        });
     </script>
 </body>
 
